@@ -632,39 +632,30 @@ function signup_permission() {
   return array(
     'sign up for content' => array(
       'title' => t('sign up for content'),
-      'description' => t('TODO Add a description for sign up for content'),
     ),
     'cancel signups' => array(
       'title' => t('cancel signups'),
-      'description' => t('TODO Add a description for cancel signups'),
     ),
     'cancel own signups' => array(
       'title' => t('cancel own signups'),
-      'description' => t('TODO Add a description for cancel own signups'),
     ),
     'edit own signups' => array(
       'title' => t('edit own signups'),
-      'description' => t('TODO Add a description for edit own signups'),
     ),
     'view all signups' => array(
       'title' => t('view all signups'),
-      'description' => t('TODO Add a description for view all signups'),
     ),
     'administer all signups' => array(
       'title' => t('administer all signups'),
-      'description' => t('TODO Add a description for administer all signups'),
     ),
     'administer signups for own content' => array(
       'title' => t('administer signups for own content'),
-      'description' => t('TODO Add a description for administer signups for own content'),
     ),
     'email users signed up for own content' => array(
       'title' => t('email users signed up for own content'),
-      'description' => t('TODO Add a description for email users signed up for own content'),
     ),
     'email all signed up users' => array(
       'title' => t('email all signed up users'),
-      'description' => t('TODO Add a description for email all signed up users'),
     ),
   );
 }
