@@ -49,7 +49,7 @@ function _signup_current_user_signup($node, $type = 'node') {
       // If they're logged in and already signed up, show their current
       // signup info and give them the option to cancel.
       if ($user->uid) {
-        $signup = db_fetch_object(db_query("SELECT sl.*, n.title, u.name FROM {signup_log} sl INNER JOIN {node} n ON sl.nid = n.nid INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.uid = %d AND sl.nid = %d", $user->uid, $node->nid));
+        $signup = db_query("SELECT sl.*, n.title, u.name FROM {signup_log} sl INNER JOIN {node} n ON sl.nid = n.nid INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.uid = :uid AND sl.nid = :nid", array(':uid' => $user->uid, ':nid' => $node->nid))->fetchObject();
         if (!empty($signup)) {
           $current_signup = _signup_render_signup_edit_form($signup, $type);
         }
@@ -90,7 +90,7 @@ function _signup_current_user_signup($node, $type = 'node') {
       // An authenticated user.
 
       // See if the user is already signed up for this node.
-      $signup = db_fetch_object(db_query("SELECT sl.*, n.title, u.name, u.mail FROM {signup_log} sl INNER JOIN {node} n ON sl.nid = n.nid INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.uid = %d AND sl.nid = %d", $user->uid, $node->nid));
+      $signup = db_query("SELECT sl.*, n.title, u.name, u.mail FROM {signup_log} sl INNER JOIN {node} n ON sl.nid = n.nid INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.uid = :uid AND sl.nid = :nid", array(':uid' => $user->uid, ':nid' => $node->nid))->fetchObject();
       if (empty($signup)) {
         // Not yet signed up
         if (user_access('sign up for content')) {
@@ -121,14 +121,15 @@ function signup_user_list_output($node) {
   if (_signup_menu_access($node, 'list')) {
     if ($display_list == 'signup' || $display_list == 'signup-tab') {
       // Admin wants the hard-coded signup listing.
-      $registered_query = db_query("SELECT u.uid, u.name, s.signup_time, s.form_data FROM {signup_log} s INNER JOIN {users} u ON u.uid = s.uid WHERE s.nid = %d AND u.uid <> 0", $node->nid);
+      $registered_result = db_query("SELECT u.uid, u.name, s.signup_time, s.form_data FROM {signup_log} s INNER JOIN {users} u ON u.uid = s.uid WHERE s.nid = :nid AND u.uid <> 0", array(':nid' => $node->nid));
       $registered_signups = array();
-      while ($signed_up_user = db_fetch_object($registered_query)) {
+      // TODO: This is redundant. Fix theme_signup_user_list so it can handle the db result directly.
+      foreach ($registered_result as $signed_up_user) {
         $registered_signups[] = $signed_up_user;
       }
-      $anon_query = db_query("SELECT * FROM {signup_log} WHERE nid = %d AND uid = 0", $node->nid);
+      $anon_result = db_query("SELECT * FROM {signup_log} WHERE nid = :nid AND uid = 0", array(':nid' => $node->nid));
       $anon_signups = array();
-      while ($signed_up_user = db_fetch_object($anon_query)) {
+      foreach ($anon_result as $signed_up_user) {
         $anon_signups[] = $signed_up_user;
       }
       $output .= theme('signup_user_list', array('node' => $node, 'registered_signups' => $registered_signups, 'anon_signups' => $anon_signups));

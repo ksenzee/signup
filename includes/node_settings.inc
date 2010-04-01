@@ -38,7 +38,7 @@ function signup_node_settings_form($form_state, $node = NULL, $node_type = NULL,
 
   // Load the default admin form data for new nodes.
   if (!$node || !$node->signup) {
-    $result = db_fetch_object(db_query("SELECT * FROM {signup} WHERE nid = 0"));
+    $result = db_query("SELECT * FROM {signup} WHERE nid = 0")->fetchObject();
     $node->signup_forwarding_email = $result->forwarding_email;
     $node->signup_send_confirmation = $result->send_confirmation;
     $node->signup_confirmation_email = $result->confirmation_email;
@@ -156,7 +156,7 @@ function signup_node_settings_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   if ($op == t('Reset to defaults')) {
     // If we're resetting, we just want to grab the site-wide defaults.
-    $values = db_fetch_array(db_query("SELECT forwarding_email, send_confirmation, confirmation_email, close_signup_limit, send_reminder, reminder_days_before, reminder_email FROM {signup} WHERE nid = 0"));
+    $values = db_query("SELECT forwarding_email, send_confirmation, confirmation_email, close_signup_limit, send_reminder, reminder_days_before, reminder_email FROM {signup} WHERE nid = 0")->fetchAssoc();
   }
   else {
     // Populate $values from $form_state.
@@ -174,13 +174,17 @@ function signup_node_settings_form_submit($form, &$form_state) {
   // Either way, we want to make sure we're updating the values for the
   // current node, not nid 0...
   $node = $form['#node'];
-  $values[] = $node->nid;
-  db_query("UPDATE {signup} SET forwarding_email = '%s', send_confirmation = %d, confirmation_email = '%s', close_signup_limit = %d, send_reminder = %d, reminder_days_before = %d, reminder_email = '%s' WHERE nid = %d", $values);
+  // TODO: test
+  db_update('signup')
+    ->fields($values)
+    ->condition('nid', $node->nid)
+    ->execute();
+  //db_query("UPDATE {signup} SET forwarding_email = '%s', send_confirmation = %d, confirmation_email = '%s', close_signup_limit = %d, send_reminder = %d, reminder_days_before = %d, reminder_email = '%s' WHERE nid = %d", $values);
 
   // See if the limit changed, and if so, take any necessary action.
   if ($node->signup_close_signup_limit != $form_state['values']['signup_close_signup_limit']) {
     $node->signup_close_signup_limit = $form_state['values']['signup_close_signup_limit'];
-    $node->signup_effective_total = db_result(db_query("SELECT SUM(count_towards_limit) FROM {signup_log} WHERE nid = %d", $node->nid));
+    $node->signup_effective_total = db_query("SELECT SUM(count_towards_limit) FROM {signup_log} WHERE nid = :nid", array(':nid' => $node->nid))->fetchField();
     _signup_check_limit($node, 'limit');
   }
 

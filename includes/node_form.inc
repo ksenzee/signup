@@ -37,10 +37,10 @@ function signup_save_node($node, $op) {
   if ($op == 'update' && isset($node->signup_enabled)) {
     switch ($node->signup_enabled) {
       case 2: // Disabled, and delete {signup_log}, too
-        db_query("DELETE FROM {signup_log} WHERE nid = %d", $node->nid);
+        db_delete('signup_log')->condition('nid', $node->nid)->execute();
         // No break, fall through and remove from {signup} too.
       case 0: // Disabled, but leave {signup_log} alone
-        db_query("DELETE FROM {signup} WHERE nid = %d", $node->nid);
+        db_delete('signup')->condition('nid', $node->nid)->execute();
         // We're done.
         return;
     }
@@ -59,15 +59,19 @@ function signup_save_node($node, $op) {
     }
     else {
       // Updating -- see if we already have a record for this node.
-      $has_record = db_result(db_query("SELECT nid FROM {signup} WHERE nid = %d", $node->nid));
+      $has_record = db_query("SELECT nid FROM {signup} WHERE nid = :nid", array(':nid' => $node->nid))->fetchField();
       $needs_defaults = empty($has_record);
     }
   }
 
   if ($needs_defaults) {
-    $values = db_fetch_array(db_query("SELECT forwarding_email, send_confirmation, confirmation_email, close_signup_limit, send_reminder, reminder_days_before, reminder_email FROM {signup} WHERE nid = 0"));
-    $values[] = $node->nid;
-    db_query("INSERT INTO {signup} (forwarding_email, send_confirmation, confirmation_email, close_signup_limit, send_reminder, reminder_days_before, reminder_email, nid) VALUES ('%s', %d, '%s', %d, %d, %d, '%s', %d)", $values);
+    //TODO: this is untested
+    $values = db_query("SELECT forwarding_email, send_confirmation, confirmation_email, close_signup_limit, send_reminder, reminder_days_before, reminder_email FROM {signup} WHERE nid = 0")->fetchAssoc();
+    $values['nid'] = $node->nid;
+    db_insert('signup')
+      ->fields(array('forwarding_email', 'send_confirmation', 'confirmation_email', 'close_signup_limit', 'send_reminder', 'reminder_days_before', 'reminder_email', 'nid'))
+      ->values($values)
+      ->execute();
   }
 
   $node = node_load($node->nid);
@@ -125,7 +129,7 @@ function signup_alter_node_form(&$form, &$form_state, $form_id) {
     // Figure out what the options should be.  If there are already
     // people signed-up for this node, we need a 3rd choice: disable
     // signups and remove all signup data.
-    $has_signups = !empty($node) && db_result(db_query("SELECT COUNT(*) from {signup_log} WHERE nid = %d", $node->nid));
+    $has_signups = !empty($node) && db_query("SELECT COUNT(*) from {signup_log} WHERE nid = :nid", array(':nid' => $node->nid))->fetchField();
     $radio_options[1] = t('Enabled');
     if ($has_signups) {
       $radio_options[0] = t('Disabled, but save existing signup information');

@@ -674,8 +674,9 @@ function signup_user_cancel($edit, $account, $method) {
     $uids[] = $edit['_account']->uid;
   }
   foreach ($uids as $uid) {
-    $query = db_query("SELECT * FROM {signup_log} WHERE uid = %d", $uid);
-    while ($signup = db_fetch_object($query)) {
+    $signups = db_query("SELECT * FROM {signup_log} WHERE uid = :uid", array(':uid' => $uid));
+    // TODO: Test
+    foreach ($signups as $signup) {
       signup_cancel_signup($signup);
     }
   }
@@ -769,37 +770,39 @@ function signup_node_update($node) {
  */
 function signup_node_delete($node) {
   // Clean up the signup tables for the deleted node.
-  db_query("DELETE FROM {signup} WHERE nid = %d", $node->nid);
-  db_query("DELETE FROM {signup_log} WHERE nid = %d", $node->nid);
+  // TODO: Test
+  db_delete('signup')->condition('nid', $node->nid)->execute();
+  db_delete('signup_log')->condition('nid', $node->nid)->execute();
 }
 
 /**
  * Implements hook_node_load.
  */
-function signup_node_load($node, $types) {
-  // Check for a signup for this node.
+function signup_node_load($nodes, $types) {
+  // Check for a signup for the given nodes.
   // If it's a new node, load the defaults.
-  $result = db_query("SELECT * FROM {signup} WHERE nid = %d", ($node->nid ? $node->nid : 0));
-  $signup = db_fetch_object($result);
-  // Load signup data for both new nodes w/ enabled node types,
-  // and any existing nodes that are already signup enabled.
-  if ((!$node->nid && variable_get('signup_node_default_state_' . $node->type, 'disabled') == 'enabled_on') || ($node->nid && !empty($signup))) {
-    $node->signup = 1;
-    $node->signup_forwarding_email = $signup->forwarding_email;
-    $node->signup_send_confirmation = $signup->send_confirmation;
-    $node->signup_confirmation_email = $signup->confirmation_email;
-    $node->signup_send_reminder  = $signup->send_reminder;
-    $node->signup_reminder_days_before = $signup->reminder_days_before;
-    $node->signup_reminder_email = $signup->reminder_email;
-    $node->signup_close_signup_limit = $signup->close_signup_limit;
-    $node->signup_status = $signup->status;
-    if ($node->nid) {
-      $node->signup_total = db_result(db_query("SELECT COUNT(*) FROM {signup_log} WHERE nid = %d", $node->nid));
-      $node->signup_effective_total = db_result(db_query("SELECT SUM(count_towards_limit) FROM {signup_log} WHERE nid = %d", $node->nid));
+  $result = db_query("SELECT * FROM {signup} WHERE nid IN (:nids)", array(':nids' => array_keys($nodes)));
+  foreach ($result as $signup) {
+    // Load signup data for both new nodes w/ enabled node types,
+    // and any existing nodes that are already signup enabled.
+    if ((empty($nodes[$signup->nid]->nid) && variable_get('signup_node_default_state_' . $nodes[$signup->nid]->type, 'disabled') == 'enabled_on') || (!empty($nodes[$signup->nid]->nid) && !empty($signup))) {
+      $nodes[$signup->nid]->signup = 1;
+      $nodes[$signup->nid]->signup_forwarding_email = $signup->forwarding_email;
+      $nodes[$signup->nid]->signup_send_confirmation = $signup->send_confirmation;
+      $nodes[$signup->nid]->signup_confirmation_email = $signup->confirmation_email;
+      $nodes[$signup->nid]->signup_send_reminder  = $signup->send_reminder;
+      $nodes[$signup->nid]->signup_reminder_days_before = $signup->reminder_days_before;
+      $nodes[$signup->nid]->signup_reminder_email = $signup->reminder_email;
+      $nodes[$signup->nid]->signup_close_signup_limit = $signup->close_signup_limit;
+      $nodes[$signup->nid]->signup_status = $signup->status;
+      if ($nodes[$signup->nid]->nid) {
+        $nodes[$signup->nid]->signup_total = db_query("SELECT COUNT(*) FROM {signup_log} WHERE nid = :nid", array(':nid' => $nodes[$signup->nid]->nid))->fetchField();
+        $nodes[$signup->nid]->signup_effective_total = db_query("SELECT SUM(count_towards_limit) FROM {signup_log} WHERE nid = :nid", array(':nid' => $nodes[$signup->nid]->nid))->fetchField();
+      }
     }
-  }
-  else {
-    $node->signup = 0;
+    else {
+      $nodes[$signup->nid]->signup = 0;
+    }
   }
 }
 
@@ -810,7 +813,7 @@ function signup_node_view($node, $view_mode = 'full') {
   // If this is a signup node, figure out what (if anything) to print.
   // Only include any of this if we're trying to view the node as
   // a page, not during the view from comment validation, etc.
-  if ($page && _signup_needs_output($node)) {
+  if ($view_mode == 'full' && _signup_needs_output($node)) {
     $info_location = variable_get('signup_form_location', 'node');
     $list_location = variable_get('signup_display_signup_user_list', 'signup');
     if ($info_location == 'node' || $list_location == 'signup' || $list_location == 'embed-view') {
