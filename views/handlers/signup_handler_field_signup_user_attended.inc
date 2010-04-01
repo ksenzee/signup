@@ -6,7 +6,7 @@
  */
 class signup_handler_field_signup_user_attended extends views_handler_field {
   function render($values) {
-    return theme('signup_attended_text', $values->{$this->field_alias});
+    return theme('signup_attended_text', array('attended' => $values->{$this->field_alias}));
   }
 }
 

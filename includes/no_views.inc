@@ -12,7 +12,7 @@
  */
 
 /**
- * Implementation of hook_block().
+ * Implements hook_block().
  *
  * @ingroup signup_core
  *
@@ -26,7 +26,8 @@
  *   One of two possibilities. The first is an array of available blocks.
  *   The other is an array containing a block.
  */
-function signup_block($op = 'list', $delta = 0) {
+function signup_block_OLD($op = 'list', $delta = 0) {
+  // TODO Remaining code in this function needs to be moved to the appropriate new hook function.
   global $user;
   switch ($op) {
     case 'list':
@@ -76,7 +77,7 @@ function _signup_user_no_views($op, &$edit, &$user, $category = NULL) {
           '#type' => 'user_profile_item',
           '#attributes' => array('class' => 'signup-schedule'),
           '#title' => t('Signup schedule'),
-          '#value' => l(t('View full signup schedule'), 'user/'. $user->uid .'/signups'),
+          '#value' => l(t('View full signup schedule'), 'user/' . $user->uid . '/signups'),
           '#weight' => 2,
         );
       }
@@ -111,11 +112,11 @@ function _signup_no_views_user_menu_access($account) {
  */
 function signup_user_schedule($account) {
   $output = '';
-  drupal_set_title(t('Signups for @user', array('@user' => $account->name)));
+  drupal_set_title(t('Signups for @user', array('@user' => $account->name)), PASS_THROUGH);
   $titles = signup_list_user_signups($account->uid);
   foreach ($titles as $nid => $title) {
     $node = node_load($nid);
-    $output .= theme('signup_user_schedule', $node);
+    $output .= theme('signup_user_schedule', array('node' => $node));
   }
   return $output;
 }
@@ -138,7 +139,7 @@ function signup_list_user_signups($uid) {
     $sql = "SELECT n.nid, n.title FROM {node} n INNER JOIN {signup_log} s_l ON n.nid = s_l.nid WHERE s_l.uid = %d ORDER BY n.nid";
     $result = db_query(db_rewrite_sql($sql), $uid);
     while ($node = db_fetch_array($result)) {
-      $titles[$node['nid']] = l($node['title'], 'node/'. $node['nid']);
+      $titles[$node['nid']] = l($node['title'], 'node/' . $node['nid']);
     }
   }
   return $titles;

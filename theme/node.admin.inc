@@ -98,10 +98,10 @@ function theme_signup_node_admin_details_form($form) {
     $fieldset['#value'] .= drupal_render($form['operation']);
     $fieldset['#value'] .= drupal_render($form['submit']);
     $fieldset['#value'] .= '</div>';
-    $fieldset['#value'] .= theme('table', $header, $rows);
+    $fieldset['#value'] .= theme('table', array('header' => $header, 'rows' => $rows));
   }
   else {
-    $fieldset['#value'] = '<span>'. drupal_render($form['no_users']) .'</span>';
+    $fieldset['#value'] = '<span>' . drupal_render($form['no_users']) . '</span>';
   }
   return theme('fieldset', $fieldset) . drupal_render($form);
 }
@@ -131,14 +131,14 @@ function theme_signup_custom_data($data) {
   $tr = 't';
   // Loop through each first level element.
   foreach ($data as $key => $value) {
-    $output .= '<div id="'. signup_id_safe($key) .'">';
+    $output .= '<div id="' . signup_id_safe($key) . '">';
     if (is_array($value)) {
       // Element is nested, render it recursively.
       // Instead of the overhead of theme(), just call ourself directly.
       $output .= call_user_func(__FUNCTION__, $value);
     }
     else {
-      $output .= $tr($key) .': '. check_plain($value);
+      $output .= $tr($key) . ': ' . check_plain($value);
     }
     $output .= "</div>\n";
   }

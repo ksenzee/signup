@@ -21,12 +21,12 @@ function theme_signup_user_list($node, $registered_signups, $anon_signups) {
   $header = array(array('data' => t('!users signed up', array('!users' => format_plural((count($registered_signups) + count($anon_signups)), '1 individual', '@count individuals')))));
   $rows = array();
   foreach ($registered_signups as $signup) {
-    $rows[] = array(theme('username', $signup));
+    $rows[] = array(theme('username', array('account' => $signup)));
   }
   if (!empty($anon_signups)) {
     $rows[] = array(t('!count anonymous', array('!count' => count($anon_signups))));
   }
-  return theme('table', $header, $rows);
+  return theme('table', array('header' => $header, 'rows' => $rows));
 }
 
 /**
@@ -37,7 +37,7 @@ function theme_signup_user_list($node, $registered_signups, $anon_signups) {
  */
 function theme_signup_user_schedule($node) {
   $output = '';
-  $output .= '<div class="signup-user-schedule"><div class="'. $node->type .'signup-title"><h4>'. l($node->title, "node/$node->nid") .'</h4></div></div>';
+  $output .= '<div class="signup-user-schedule"><div class="' . $node->type . 'signup-title"><h4>' . l($node->title, "node/$node->nid") . '</h4></div></div>';
   return $output;
 }
 

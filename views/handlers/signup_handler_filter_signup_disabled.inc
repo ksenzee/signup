@@ -11,7 +11,7 @@ class signup_handler_filter_signup_disabled extends views_handler_filter_boolean
 
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where($this->options['group'], "$this->table_alias.nid ". (empty($this->value) ? 'IS' : 'IS NOT') .' NULL');
+    $this->query->add_where($this->options['group'], "$this->table_alias.nid " . (empty($this->value) ? 'IS' : 'IS NOT') . ' NULL');
   }
 }
 

@@ -206,7 +206,7 @@ function signup_views_data() {
     'click sortable' => TRUE,
     'field' => array(
       'handler' => 'signup_handler_field_signup_user_email',
-      'help' => t('Email address of a user (authenticated or anonymous) who signed up.') .' <strong>'. t('WARNING: only expose this data in a view that is restricted to users whom you can trust with such sensitive information.') .'</strong>',
+      'help' => t('Email address of a user (authenticated or anonymous) who signed up.') . ' <strong>' . t('WARNING: only expose this data in a view that is restricted to users whom you can trust with such sensitive information.') . '</strong>',
     ),
   );
 
@@ -294,7 +294,7 @@ function signup_views_data() {
 function signup_views_handlers() {
   return array(
     'info' => array(
-      'path' => drupal_get_path('module', 'signup') .'/views/handlers',
+      'path' => drupal_get_path('module', 'signup') . '/views/handlers',
     ),
     'handlers' => array(
       'signup_handler_argument_signup_user_uid' => array(
@@ -341,7 +341,7 @@ function signup_views_handlers() {
  * Implementation of hook_views_plugins().
  */
 function signup_views_plugins() {
-  $path = drupal_get_path('module', 'signup') .'/views/plugins';
+  $path = drupal_get_path('module', 'signup') . '/views/plugins';
   return array(
     'argument validator' => array(
       'signup_status' => array(

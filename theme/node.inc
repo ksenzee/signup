@@ -23,7 +23,7 @@
  * @see _signup_print_current_signup()
  */
 function theme_signup_signups_closed($node, $current_signup = '') {
-  $output = '<h3>'. t('Signups closed for this %node_type', array('%node_type' => node_get_types('name', $node->type))) .'</h3>';
+  $output = '<h3>' . t('Signups closed for this %node_type', array('%node_type' => node_type_get_name($node->type))) . '</h3>';
   $output .= $current_signup;
   return $output;
 }
@@ -40,7 +40,7 @@ function theme_signup_signups_closed($node, $current_signup = '') {
  */
 function theme_signup_anonymous_user_login_text($anon_login_text) {
   if (!empty($anon_login_text)) {
-    return '<div class="signup_anonymous_login">'. $anon_login_text .'</div>';
+    return '<div class="signup_anonymous_login">' . $anon_login_text . '</div>';
   }
 }
 

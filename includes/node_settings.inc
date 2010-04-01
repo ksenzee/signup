@@ -88,7 +88,7 @@ function signup_node_settings_form($form_state, $node = NULL, $node_type = NULL,
     for ($i = 1; $i <= 60; $i++) {
       $options[$i] = $i;
     }
-    $node_type_name = isset($node_type) ? node_get_types('name', $node_type) : '';
+    $node_type_name = isset($node_type) ? node_type_get_name($node_type) : '';
     $form['signup_reminder']['signup_reminder_days_before'] = array(
       '#type' => 'select',
       '#default_value' => $node->signup_reminder_days_before,

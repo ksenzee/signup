@@ -52,7 +52,7 @@ function signup_form(&$form_state, $node, $signup_type = 'auth', $fieldset = TRU
     $anon_form['signup_anon_mail'] = array(
       '#type' => 'textfield',
       '#title' => t('Email'),
-      '#description' => t('An e-mail address is required for users who are not registered at this site. If you are a registered user at this site, please !login to sign up for this %node_type.', array('!login' => l(t('login'), 'user/login', array('query' => drupal_get_destination())), '%node_type' => node_get_types('name', $node->type))),
+      '#description' => t('An e-mail address is required for users who are not registered at this site. If you are a registered user at this site, please !login to sign up for this %node_type.', array('!login' => l(t('login'), 'user/login', array('query' => drupal_get_destination())), '%node_type' => node_type_get_name($node->type))),
       '#size' => 40,
       '#maxlength' => 255,
       '#required' => TRUE,
@@ -76,7 +76,7 @@ function signup_form(&$form_state, $node, $signup_type = 'auth', $fieldset = TRU
   }
 
   // Build the themed signup form for this site and include that.
-  $signup_themed_form = theme('signup_user_form', $node);
+  $signup_themed_form = theme('signup_user_form', array('node' => $node));
 
   if ($signup_type == 'admin') {
     // Special case hack for the default signup form, where the current
@@ -108,7 +108,7 @@ function signup_form(&$form_state, $node, $signup_type = 'auth', $fieldset = TRU
  */
 function signup_form_submit($form, &$form_state) {
   if (isset($form_state['values']['signup_username'])) {
-    $account = user_load(array('name' => $form_state['values']['signup_username']));
+    $account = user_load_multiple(array(), array('name' => $form_state['values']['signup_username']));
     $form_state['values']['uid'] = $account->uid;
   }
   signup_sign_up_user($form_state['values']);
@@ -150,7 +150,7 @@ function signup_validate_anon_email($nid, $anon_mail, $name = FALSE) {
   }
   elseif (db_result(db_query("SELECT COUNT(*) FROM {signup_log} WHERE anon_mail = '%s' AND nid = %d", $anon_mail, $nid))) {
     $node = node_load($nid);
-    $message = t('The email address entered has already been used to sign up for this %node_type.', array('%node_type' => node_get_types('name', $node->type)));
+    $message = t('The email address entered has already been used to sign up for this %node_type.', array('%node_type' => node_type_get_name($node->type)));
   }
 
   // If there's no message, it's a valid email, so return success.
@@ -179,16 +179,16 @@ function signup_validate_anon_email($nid, $anon_mail, $name = FALSE) {
 function signup_form_validate_username($form, $form_state) {
   $nid = $form_state['values']['nid'];
   $username = $form_state['values']['signup_username'];
-  $account = user_load(array('name' => $username));
+  $account = user_load_multiple(array(), array('name' => $username));
   if (empty($account)) {
     form_set_error('signup_username', t('User %user_name does not exist.', array('%user_name' => $username)));
   }
   elseif (!user_access('sign up for content', $account)) {
-    form_set_error('signup_username', t('User !user does not have permission to sign up.', array('!user' => theme('username', $account))));
+    form_set_error('signup_username', t('User !user does not have permission to sign up.', array('!user' => theme('username', array('account' => $account)))));
   }
   elseif (db_result(db_query("SELECT COUNT(*) FROM {signup_log} WHERE uid = %d AND nid = %d", $account->uid, $nid)) > 0) {
     $node = node_load($nid);
-    form_set_error('signup_username', t('User !user is already signed up for %title', array('!user' => theme('username', $account), '%title' => $node->title)));
+    form_set_error('signup_username', t('User !user is already signed up for %title', array('!user' => theme('username', array('account' => $account)), '%title' => $node->title)));
   }
 }
 

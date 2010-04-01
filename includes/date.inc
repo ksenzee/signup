@@ -22,13 +22,13 @@ function _signup_date_admin_sql($content_type) {
   $alias = db_escape_table($content_type);
 
   // See what fields to SELECT.
-  $fields[] = $alias .'.'. $field['database']['columns']['value']['column'];
+  $fields[] = $alias . '.' . $field['database']['columns']['value']['column'];
   if (isset($field['database']['columns']['timezone']['column'])) {
-    $fields[] = $alias .'.'. $field['database']['columns']['timezone']['column'];
+    $fields[] = $alias . '.' . $field['database']['columns']['timezone']['column'];
   }
   // We need to quote the alias in case someone used a reserved word for the
   // machine-readable name of a content type.
-  $table = '{'. $field['database']['table'] .'} `'. $alias .'`';
+  $table = '{' . $field['database']['table'] . '} `' . $alias . '`';
   return array(
     'fields' => $fields,
     'joins' => array("LEFT JOIN $table ON $alias.vid = n.vid"),
@@ -49,7 +49,7 @@ function signup_field_names($content_type = NULL) {
 }
 
 function signup_date_field($content_type) {
-  $field_name = variable_get('signup_date_field_'. $content_type, 0);
+  $field_name = variable_get('signup_date_field_' . $content_type, 0);
   if ($field_name === 0 || $field_name == '0') {
     // PHP is completely evil and 'none' == 0 is TRUE, hence the extra checks.
     return FALSE;
@@ -102,7 +102,7 @@ function _signup_date_get_node_scheduler($node) {
  */
 function signup_form_content_field_edit_form_alter(&$form, &$form_state) {
   $type = $form['type_name']['#value'];
-  if (in_array($form['#field']['type'], array('date', 'datestamp', 'datetime')) && variable_get('signup_node_default_state_'. $type, 'disabled') != 'disabled') {
+  if (in_array($form['#field']['type'], array('date', 'datestamp', 'datetime')) && variable_get('signup_node_default_state_' . $type, 'disabled') != 'disabled') {
     $form['signup'] = array(
       '#type' => 'fieldset',
       '#title' => t('Signup settings'),
@@ -124,10 +124,10 @@ function signup_form_content_field_edit_form_alter(&$form, &$form_state) {
 function _signup_date_field_form_submit($form, &$form_state) {
   $type = $form_state['values']['type_name'];
   if (empty($form_state['values']['signup_date_field'])) {
-    variable_del('signup_date_field_'. $type);
+    variable_del('signup_date_field_' . $type);
   }
   else {
-    variable_set('signup_date_field_'. $type, $form_state['values']['signup_date_field']);
+    variable_set('signup_date_field_' . $type, $form_state['values']['signup_date_field']);
   }
 }
 
@@ -137,10 +137,10 @@ function _signup_date_field_form_submit($form, &$form_state) {
  * @see signup_alter_node_type_form()
  */
 function _signup_date_alter_node_type_form(&$form, &$form_state) {
-  drupal_add_js(drupal_get_path('module', 'signup') .'/js/admin.content_types.js');
+  drupal_add_js(drupal_get_path('module', 'signup') . '/js/admin.content_types.js');
 
   $type = $form['#node_type']->type;
-  $default_signup_state = variable_get('signup_node_default_state_'. $type, 'disabled');
+  $default_signup_state = variable_get('signup_node_default_state_' . $type, 'disabled');
 
   // Add a div to the 'Signup options' radios for signup.date.js.
   $form['signup']['signup_node_default_state']['#prefix'] = '<div class="signup-node-default-state-radios">';
@@ -163,7 +163,7 @@ function _signup_date_alter_node_type_form(&$form, &$form_state) {
   }
 
   $form['signup']['signup_date_field'] = _signup_date_field_element($type);
-  $form['signup']['signup_date_field']['#prefix'] = '<div class="'. $class .'">';
+  $form['signup']['signup_date_field']['#prefix'] = '<div class="' . $class . '">';
   $form['signup']['signup_date_field']['#suffix'] = '</div>';
 }
 
@@ -184,7 +184,7 @@ function _signup_date_field_element($type) {
     '#type' => 'select',
     '#title' => t('Date field to use with signup'),
     '#options' => _signup_get_date_field_options($type),
-    '#default_value' => variable_get('signup_date_field_'. $type, 0),
+    '#default_value' => variable_get('signup_date_field_' . $type, 0),
     '#description' => t('Select the date field of this content type to use for signup time-based functionality, such as automatically closing signups when the start time has passed and sending reminder emails. Select "%none" to not use a date field for signup functionality at all.', array('%none' => t('None'))),
   );
 }
@@ -205,7 +205,7 @@ function _signup_date_field_element($type) {
  * @see signup_date_field_check_config()
  */
 function signup_date_check_node_types($type = NULL) {
-  $names = node_get_types('names');
+  $names = node_type_get_names();
   if (!empty($type)) {
     signup_date_field_check_config($type, $names[$type]);
   }
@@ -237,7 +237,7 @@ function signup_date_check_node_types($type = NULL) {
  * @see signup_help()
  */
 function signup_date_field_check_config($type, $name) {
-  $signup_default_state = variable_get('signup_node_default_state_'. $type, 'disabled');
+  $signup_default_state = variable_get('signup_node_default_state_' . $type, 'disabled');
   $signup_scheduler = _signup_get_node_type_scheduler($type);
   if ($signup_scheduler != 'event' && $signup_default_state != 'disabled') {
     // Signups aren't disabled on this node type, see if there's a date field.
@@ -247,8 +247,8 @@ function signup_date_field_check_config($type, $name) {
       $placeholders = array(
         '%node_type' => $name,
         '%signup_date_field' => t('Date field to use with signup'),
-        '@type_admin_url' => url('admin/content/node-type/'. $type_url),
-        '@type_add_field_url' => url('admin/content/node-type/'. $type_url .'/fields'),
+        '@type_admin_url' => url('admin/content/node-type/' . $type_url),
+        '@type_add_field_url' => url('admin/content/node-type/' . $type_url . '/fields'),
         '%none' => t('<none>'),
       );
       // Administrator hasn't specifically turned off date support...
@@ -280,7 +280,7 @@ function signup_date_field_check_config($type, $name) {
 function _signup_get_date_field_options($type) {
   $options = array();
   // Add "Not specified" if the user never selected a field.
-  if (variable_get('signup_date_field_'. $type, 0) == 0) {
+  if (variable_get('signup_date_field_' . $type, 0) == 0) {
     $options = array(0 => t('<Not specified>'));
   }
   // Add any date fields from this node type.
@@ -307,7 +307,7 @@ function _signup_date_reminder_sql($content_type) {
   // Find the current time in the appropriate TZ for this field.
   $now_date = date_now($compare_tz);
   // Need to enclose this in ' marks to use directly in the SQL.
-  $now = "'". date_format($now_date, DATE_FORMAT_DATETIME) ."'";
+  $now = "'" . date_format($now_date, DATE_FORMAT_DATETIME) . "'";
 
   // Extract the correct SQL to represent the start time.
   $start_time = $handler->sql_field($start_field);
@@ -330,7 +330,7 @@ function _signup_date_reminder_sql($content_type) {
   if (isset($field['database']['columns']['timezone']['column'])) {
     $fields[] = $field['database']['columns']['timezone']['column'];
   }
-  $table = '{'. $field['database']['table'] .'}';
+  $table = '{' . $field['database']['table'] . '}';
   return array(
     'fields' => $fields,
     'joins' => array("INNER JOIN $table ON $table.vid = n.vid"),
@@ -371,7 +371,7 @@ function _signup_date_autoclose_sql($content_type) {
   if (isset($field['database']['columns']['timezone']['column'])) {
     $fields[] = $field['database']['columns']['timezone']['column'];
   }
-  $table = '{'. $field['database']['table'] .'}';
+  $table = '{' . $field['database']['table'] . '}';
   return array(
     'fields' => $fields,
     'joins' => array("INNER JOIN $table ON $table.vid = n.vid"),
@@ -449,7 +449,7 @@ function _signup_date_sql_math($field, $direction, $count, $granularity) {
       else {
         return "DATE_SUB($field, INTERVAL $count $granularity)";
       }
-      
+
     case 'pgsql':
       $granularity .= 'S';
       if ($direction == 'ADD') {

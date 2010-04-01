@@ -44,7 +44,7 @@ function signup_node_admin_summary_form($form_state, $node) {
   $form['limit'] = array(
     '#type' => 'item',
     '#title' => t('Signup limit'),
-    '#value' => l($node->signup_close_signup_limit, 'node/'. $node->nid .'/signups/settings', array('fragment' => 'signup-limit')),
+    '#value' => l($node->signup_close_signup_limit, 'node/' . $node->nid . '/signups/settings', array('fragment' => 'signup-limit')),
   );
   $form['nid'] = array(
     '#type' => 'value',

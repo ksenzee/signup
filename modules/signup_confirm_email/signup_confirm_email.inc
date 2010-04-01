@@ -23,8 +23,8 @@ function signup_confirm_email_alter_signup_form(&$form, &$form_state, $form_id) 
     // and we shouldn't confirm email when an admin is editing another signup).
     if (empty($user->uid) || $user->uid != $signup->uid) {
       return;
-    } 
-    
+    }
+
     // Ensure the user has permission to edit their own signups, or the rest
     // of this is wasted effort for a form that can't be submitted.
     $node = node_load($signup->nid);
@@ -91,7 +91,7 @@ function signup_email_confirm_validate($form, $form_state) {
   }
   // Add a JS setting for if the checkbox has a validation error, in which
   // case we display it, even if the 'E-mail address' field isn't re-edited.
-  drupal_add_js(array('signupConfirmEmailCheckboxError' => $error), 'setting');
+  drupal_add_js(array('signupConfirmEmailCheckboxError' => $error), array('type' => 'setting', 'scope' => JS_DEFAULT));
 }
 
 /**
@@ -105,7 +105,7 @@ function signup_email_confirm_validate($form, $form_state) {
  */
 function signup_email_confirm_submit($form, &$form_state) {
   global $user;
-  if (!empty($form_state['values']['email_confirm']) && 
+  if (!empty($form_state['values']['email_confirm']) &&
       !empty($form_state['values']['email_address'])) {
     if ($form_state['values']['email_address'] != $user->mail) {
       // Update the user's e-mail address in their profile.

@@ -29,7 +29,7 @@
  *
  */
 function _signup_node_output($node, $type = 'node') {
-  $output = theme('signup_node_output_header', $node);
+  $output = theme('signup_node_output_header', array('node' => $node));
   $output .= _signup_current_user_signup($node, $type);
   return $output;
 }
@@ -54,7 +54,7 @@ function _signup_current_user_signup($node, $type = 'node') {
           $current_signup = _signup_render_signup_edit_form($signup, $type);
         }
       }
-      $output .= theme('signup_signups_closed', $node, $current_signup);
+      $output .= theme('signup_signups_closed', array('node' => $node, 'current_signup' => $current_signup));
     }
   }
   else {
@@ -74,7 +74,7 @@ function _signup_current_user_signup($node, $type = 'node') {
           $token_array = array(
             '!login' => l(t('login'), 'user/login', array('query' => drupal_get_destination())),
             '!register' => l(t('register'), 'user/register', array('query' => drupal_get_destination())),
-            '%node_type' => node_get_types('name', $node->type),
+            '%node_type' => node_type_get_name($node->type),
           );
           if (variable_get('user_register', 1) == 0) {
             $anon_login_text = t('Please !login to sign up for this %node_type.', $token_array);
@@ -83,7 +83,7 @@ function _signup_current_user_signup($node, $type = 'node') {
             $anon_login_text = t('Please !login or !register to sign up for this %node_type.', $token_array);
           }
         }
-        $output .= theme('signup_anonymous_user_login_text', $anon_login_text);
+        $output .= theme('signup_anonymous_user_login_text', array('anon_login_text' => $anon_login_text));
       }
     }
     else {
@@ -131,7 +131,7 @@ function signup_user_list_output($node) {
       while ($signed_up_user = db_fetch_object($anon_query)) {
         $anon_signups[] = $signed_up_user;
       }
-      $output .= theme('signup_user_list', $node, $registered_signups, $anon_signups);
+      $output .= theme('signup_user_list', array('node' => $node, 'registered_signups' => $registered_signups, 'anon_signups' => $anon_signups));
     }
     elseif (($display_list == 'embed-view' || $display_list == 'embed-view-tab') && module_exists('views')) {
       $signup_view = variable_get('signup_user_list_view', 'signup_user_list:default');
@@ -170,7 +170,7 @@ function signup_user_list_output($node) {
  * @see _signup_node_output()
  */
 function signup_node_tab($node) {
-  drupal_set_title(check_plain($node->title));
+  drupal_set_title($node->title);
   return _signup_node_output($node, 'tab');
 }
 
@@ -186,7 +186,7 @@ function _signup_render_signup_edit_form($signup, $type) {
   module_load_include('inc', 'signup', 'includes/signup_edit_form');
   $form = drupal_get_form('signup_edit_form', $signup, $type);
   $form_errors = form_get_errors() ? TRUE : FALSE;
-  drupal_add_js(array('signupEditFormErrors' => $form_errors), 'setting');
+  drupal_add_js(array('signupEditFormErrors' => $form_errors), array('type' => 'setting', 'scope' => JS_DEFAULT));
   return $form;
 }
 

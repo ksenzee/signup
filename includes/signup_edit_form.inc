@@ -34,7 +34,7 @@ function signup_edit_form($form_state, $signup, $type) {
   $can_edit = $admin || (user_access('edit own signups') && $own);
 
   if ($type == 'admin') {
-    $title = t("Information for !user's signup to !node", array('!user' => _signup_get_username($signup, TRUE), '!node' => l($node->title, 'node/'. $node->nid)));
+    $title = t("Information for !user's signup to !node", array('!user' => _signup_get_username($signup, TRUE), '!node' => l($node->title, 'node/' . $node->nid)));
   }
   else {
     $title = t('Your signup information');
@@ -72,11 +72,11 @@ function signup_edit_form($form_state, $signup, $type) {
 
   if ($admin) {
     $options = array();
-    if (1|| !isset($signup->attended)) {
+    if (1 || !isset($signup->attended)) {
       $options[-1] = t('- Not recorded -');
     }
-    $options[1] = theme('signup_attended_text', 1);
-    $options[0] = theme('signup_attended_text', 0);
+    $options[1] = theme('signup_attended_text', array('attended' => 1));
+    $options[0] = theme('signup_attended_text', array('attended' => 0));
     $form['elements']['attended'] = array(
       '#type' => 'select',
       '#title' => t('Attendance'),
@@ -86,7 +86,7 @@ function signup_edit_form($form_state, $signup, $type) {
   }
 
   // Build the themed signup form for this site and include that.
-  $site_form = theme('signup_user_form', $node);
+  $site_form = theme('signup_user_form', array('node' => $node));
   $form_data = unserialize($signup->form_data);
 
   // This is sort of a hack, but we don't support nested arrays for the custom
@@ -117,7 +117,7 @@ function signup_edit_form($form_state, $signup, $type) {
     }
     else {
       // If there's no destination already set, redirect to the node.
-      $destination = 'destination='. urlencode("node/$signup->nid");
+      $destination = 'destination=' . urlencode("node/$signup->nid");
     }
     $signup_token = signup_get_token($signup->sid, 'cancel');
     $form['elements']['cancel-signup'] = array(

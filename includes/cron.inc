@@ -48,7 +48,7 @@ function _signup_cron_send_reminders() {
     // Grab each node, construct the email header and subject, and query
     // the signup log to pull all users who are signed up for this node.
     while ($node = db_fetch_object($result)) {
-      $subject = t('!node_type reminder: !title', array('!node_type' => node_get_types('name', $type), '!title' => $node->title));
+      $subject = t('!node_type reminder: !title', array('!node_type' => node_type_get_name($type), '!title' => $node->title));
       $signups = db_query("SELECT u.name, u.mail, s_l.sid, s_l.anon_mail, s_l.form_data FROM {signup_log} s_l INNER JOIN {users} u ON u.uid = s_l.uid WHERE s_l.nid = %d", $node->nid);
 
       // Loop through the users, composing their customized message
@@ -66,7 +66,7 @@ function _signup_cron_send_reminders() {
         }
         $language = user_preferred_language($signup);
         drupal_mail('signup', 'signup_reminder_mail', $user_mail, $language, $params, $from);
-        watchdog('signup', 'Reminder for %title sent to %user_mail.', array('%title' => $node->title, '%user_mail' => $user_mail), WATCHDOG_NOTICE, l(t('view'), 'node/'. $node->nid));
+        watchdog('signup', 'Reminder for %title sent to %user_mail.', array('%title' => $node->title, '%user_mail' => $user_mail), WATCHDOG_NOTICE, l(t('view'), 'node/' . $node->nid));
       }
 
       // Reminders for this node are all sent, so mark it in the
@@ -117,10 +117,10 @@ function _signup_cron_autoclose() {
       signup_close_signup($signup->nid, $cron = 'yes');
       $node = node_load($signup->nid);
       foreach (module_implements('signup_close') as $module) {
-        $function = $module .'_signup_close';
+        $function = $module . '_signup_close';
         $function($node);
       }
-      watchdog('signup', 'Signups closed for %title by cron.', array('%title' => $node->title), WATCHDOG_NOTICE, l(t('view'), 'node/'. $node->nid));
+      watchdog('signup', 'Signups closed for %title by cron.', array('%title' => $node->title), WATCHDOG_NOTICE, l(t('view'), 'node/' . $node->nid));
     }
   }
 }

@@ -11,10 +11,10 @@
  * Print the admin signup overview page located at admin/content/signup.
  */
 function signup_admin_page() {
-  drupal_add_css(drupal_get_path('module', 'signup') .'/signup.css');
+  drupal_add_css(drupal_get_path('module', 'signup') . '/signup.css');
   $filter_status_form = drupal_get_form('signup_filter_status_form');
   $signup_admin_form = drupal_get_form('signup_admin_form');
-  return theme('signup_admin_page', $filter_status_form, $signup_admin_form);
+  return theme('signup_admin_page', array('filter_status_form' => $filter_status_form, 'signup_admin_form' => $signup_admin_form));
 }
 
 /**
@@ -36,7 +36,7 @@ function signup_filter_status_form(&$form_state) {
     '#default_value' => $_SESSION['signup_status_filter'],
   );
   $form['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
-//  $form['#redirect'] = FALSE;
+  //  $form['#redirect'] = FALSE;
   return $form;
 }
 
@@ -187,7 +187,7 @@ function signup_admin_form_sql() {
   $all_fragments = array_merge_recursive($admin_common_sql, $admin_sql);
   $sql_count = "SELECT COUNT(s.nid) FROM {signup} s";
   if (!empty($all_fragments['where'])) {
-    $sql_count .= ' WHERE '. implode(' AND ', $all_fragments['where']);
+    $sql_count .= ' WHERE ' . implode(' AND ', $all_fragments['where']);
   }
 
   return array(db_rewrite_sql($sql), db_rewrite_sql($sql_count, 's'));

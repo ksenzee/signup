@@ -17,7 +17,7 @@ function signup_broadcast_form($form_state, $node) {
   $signups = signup_get_signups($node->nid);
   if (empty($signups)) {
     $form['no_users'] = array(
-      '#value' => t('No users have signup up for this %node_type.', array('%node_type' => node_get_types('name', $node->type))),
+      '#value' => t('No users have signup up for this %node_type.', array('%node_type' => node_type_get_name($node->type))),
     );
     return $form;
   }
@@ -42,7 +42,7 @@ function signup_broadcast_form($form_state, $node) {
     '#type' => 'textarea',
     '#title' => t('Message body'),
     '#required' => TRUE,
-    '#description' => t('Body of the email message you wish to send to all users who have signed up for this %node_type. !token_description', array('%node_type' => node_get_types('name', $node->type), '!token_description' => $token_text)),
+    '#description' => t('Body of the email message you wish to send to all users who have signed up for this %node_type. !token_description', array('%node_type' => node_type_get_name($node->type), '!token_description' => $token_text)),
     '#rows' => 10,
   );
 
@@ -157,7 +157,7 @@ function signup_send_broadcast($nid, $subject, $body, $from, $copy = FALSE, $sig
       }
       $language = user_preferred_language($signup);
       drupal_mail('signup', 'signup_broadcast_mail', $user_mail, $language, $params, $from);
-      watchdog('signup', 'Broadcast email for %title sent to %email.', array('%title' => $node->title, '%email' => $user_mail), WATCHDOG_NOTICE, l(t('view'), 'node/'. $node->nid));
+      watchdog('signup', 'Broadcast email for %title sent to %email.', array('%title' => $node->title, '%email' => $user_mail), WATCHDOG_NOTICE, l(t('view'), 'node/' . $node->nid));
     }
     if ($copy) {
       $sender_email = _signup_get_email($user);
@@ -167,7 +167,7 @@ function signup_send_broadcast($nid, $subject, $body, $from, $copy = FALSE, $sig
         // If the token.module is enabled, also handle any tokens it provides.
         $message = token_replace_multiple($message, array('node' => $node, 'signup' => $signup, 'global' => NULL));
       }
-      $final_text = theme('signup_broadcast_sender_copy', $body, $message);
+      $final_text = theme('signup_broadcast_sender_copy', array('raw_message' => $body, 'cooked_message' => $message));
       $params = array(
         'subject' => $subject,
         'body' => $final_text,
@@ -175,7 +175,7 @@ function signup_send_broadcast($nid, $subject, $body, $from, $copy = FALSE, $sig
       );
       $language = user_preferred_language($user);
       drupal_mail('signup', 'signup_broadcast_mail', $sender_email, $language, $params, $from);
-      watchdog('signup', 'Broadcast email copy for %title sent to %email.', array('%title' => $node->title, '%email' => $sender_email), WATCHDOG_NOTICE, l(t('view'), 'node/'. $node->nid));
+      watchdog('signup', 'Broadcast email copy for %title sent to %email.', array('%title' => $node->title, '%email' => $sender_email), WATCHDOG_NOTICE, l(t('view'), 'node/' . $node->nid));
       drupal_set_message(t('Sent a copy of this message to %email', array('%email' => $sender_email)));
     }
   }

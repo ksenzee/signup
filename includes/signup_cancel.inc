@@ -44,6 +44,6 @@ function signup_cancel_link_confirm_form($form_state, $sid) {
 
 function signup_cancel_link_confirm_form_submit($form, &$form_state) {
   signup_cancel_signup($form_state['values']['sid']);
-  $form_state['redirect'] = 'node/'. $form_state['values']['nid'];
+  $form_state['redirect'] = 'node/' . $form_state['values']['nid'];
 }
 

@@ -26,7 +26,7 @@ class signup_handler_field_signup_user_form_data extends views_handler_field_pre
         $form_data = unserialize($result->{$this->field_alias});
         if ($form_data) {
           foreach ($form_data as $key => $value) {
-            $this->items[$result->{$this->field_alias}][$key] = check_plain(theme('signup_custom_data_field_text', $key, $value));
+            $this->items[$result->{$this->field_alias}][$key] = check_plain(theme('signup_custom_data_field_text', array('key' => $key, 'value' => $value)));
           }
         }
       }

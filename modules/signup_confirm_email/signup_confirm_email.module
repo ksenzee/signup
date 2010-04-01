@@ -13,7 +13,7 @@
 
 
 /**
- * Implement hook_form_alter().
+ * Implements hook_form_alter().
  */
 function signup_confirm_email_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'signup_form' || $form_id == 'signup_edit_form') {

@@ -11,7 +11,7 @@
  * Print the signup administration tab for a single node.
  */
 function signup_node_admin_page($node) {
-  drupal_set_title(check_plain($node->title));
+  drupal_set_title($node->title);
 
   // Administrative table to control signups for this node.
   // We only want this if we're not in the middle of confirming a bulk
@@ -49,7 +49,7 @@ function signup_node_admin_page($node) {
     $signup_node_admin_details_form = '';
   }
 
-  return theme('signup_node_admin_page', $node, $signup_node_admin_summary_form, $signup_node_admin_details_form);
+  return theme('signup_node_admin_page', array('node' => $node, 'signup_node_admin_summary_form' => $signup_node_admin_summary_form, 'signup_node_admin_details_form' => $signup_node_admin_details_form));
 }
 
 function signup_node_admin_details_form(&$form_state, $node) {
@@ -57,6 +57,7 @@ function signup_node_admin_details_form(&$form_state, $node) {
   $form = array();
 
   // Prepare a table header that allows sorting on name and signup time.
+  // TODO Please change this theme call to use an associative array for the $variables parameter.
   $header = array(
     theme('table_select_header_cell'),
     array('data' => t('Name'), 'field' => 'u.name', 'sort' => 'asc'),
@@ -78,17 +79,17 @@ function signup_node_admin_details_form(&$form_state, $node) {
       $username = check_plain($signed_up_user->anon_mail);
     }
     else {
-      $username = theme('username', $signed_up_user);
+      $username = theme('username', array('account' => $signed_up_user));
     }
     $key = $signed_up_user->sid;
     $users[$key] = '';
     $form['username'][$key] = array('#value' => $username);
     $form['signup_date'][$key] = array('#value' => format_date($signed_up_user->signup_time, variable_get('signup_date_format', 'small')));
-    $form['signup_form_data'][$key] = array('#value' => theme('signup_custom_data', unserialize($signed_up_user->form_data)));
-    $form['attended'][$key] = array('#value' => theme('signup_attended_text', $signed_up_user->attended));
+    $form['signup_form_data'][$key] = array('#value' => theme('signup_custom_data', array('data' => unserialize($signed_up_user->form_data))));
+    $form['attended'][$key] = array('#value' => theme('signup_attended_text', array('attended' => $signed_up_user->attended)));
   }
   if (empty($users)) {
-    $form['no_users'] = array('#value' => t('No users have signed up for this %node_type.', array('%node_type' => node_get_types('name', $node->type))));
+    $form['no_users'] = array('#value' => t('No users have signed up for this %node_type.', array('%node_type' => node_type_get_name($node->type))));
   }
   else {
     $form['nid'] = array(
@@ -142,7 +143,7 @@ function signup_node_admin_multiple_submit($form, &$form_state) {
     case 'cancel':
       if (user_access('cancel signups')) {
         $_SESSION['signup_cancel_multiple_users'] = $users;
-        $form_state['redirect'] = 'node/'. $form_state['values']['nid'] .'/signups/confirm';
+        $form_state['redirect'] = 'node/' . $form_state['values']['nid'] . '/signups/confirm';
         return;
       }
       else {
@@ -178,11 +179,11 @@ function signup_cancel_multiple_confirm(&$form_state, $node) {
     '#tree' => TRUE,
   );
   $placeholders = db_placeholders($_SESSION['signup_cancel_multiple_users']);
-  $query = db_query("SELECT u.name, u.uid, s.* FROM {signup_log} s INNER JOIN {users} u ON s.uid = u.uid WHERE s.sid IN (". $placeholders .")", $_SESSION['signup_cancel_multiple_users']);
+  $query = db_query("SELECT u.name, u.uid, s.* FROM {signup_log} s INNER JOIN {users} u ON s.uid = u.uid WHERE s.sid IN (" . $placeholders . ")", $_SESSION['signup_cancel_multiple_users']);
   while ($signup = db_fetch_object($query)) {
     $key = $signup->sid;
     if ($signup->uid) {
-      $label = theme('username', $signup);
+      $label = theme('username', array('account' => $signup));
     }
     else {
       $label = t('Anonymous signup: %anon_mail', array('%anon_mail' => $signup->anon_mail));
@@ -191,14 +192,14 @@ function signup_cancel_multiple_confirm(&$form_state, $node) {
       '#type' => 'hidden',
       '#value' => $key,
       '#prefix' => '<li>',
-      '#suffix' => $label ."</li>\n",
+      '#suffix' => $label . "</li>\n",
     );
   }
   $form['#submit'][] = 'signup_cancel_multiple_confirm_submit';
   return confirm_form(
     $form,
     t('Are you sure you want to cancel signups for these users?'),
-    'node/'. $node->nid .'/signups',
+    'node/' . $node->nid . '/signups',
     t('This action cannot be undone.'),
     t('Cancel signups'), t('Keep signups')
   );
@@ -217,7 +218,7 @@ function signup_cancel_multiple_confirm_submit($form, &$form_state) {
   else {
     drupal_set_message(t('You do not have permission to cancel signups.'), 'error');
   }
-  $form_state['redirect'] = 'node/'. $nid .'/signups';
+  $form_state['redirect'] = 'node/' . $nid . '/signups';
   unset($_SESSION['signup_cancel_multiple_users']);
 }
 

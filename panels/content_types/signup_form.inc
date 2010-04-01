@@ -25,7 +25,7 @@ function signup_panels_content_types_signup_form() {
   return array(
     'signup_form' => array(
       'title' => t('Signup form'),
-      'icon' => 'icon_node.png',  // TODO: choose different icon
+      'icon' => 'icon_node.png',   // TODO: choose different icon
       'path' => panels_get_path('content_types/node'), // TODO: adjust path
       'description' => t('Signup form.'),
       'required context' => new panels_required_context(t('Node'), 'node'),
@@ -40,7 +40,7 @@ function signup_panels_content_types_signup_form() {
  * Outputs the signup form based on a given nid, as provided by the $context.
  */
 function signup_panels_content_signup_form($subtype, $conf, $panel_args, &$context) {
-  $node = isset($context->data) ? drupal_clone($context->data) : NULL;
+  $node = isset($context->data) ? clone $context->data : NULL;
   $block = new stdClass();
   $block->module = 'signup';
   $block->subject = '';

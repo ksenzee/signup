@@ -67,11 +67,11 @@ function _signup_get_node_scheduler($node) {
  *   the node type is untimed.
  */
 function _signup_get_node_type_scheduler($type) {
-  if (module_exists('event') && variable_get('event_nodeapi_'. $type, 'never') != 'never') {
+  if (module_exists('event') && variable_get('event_nodeapi_' . $type, 'never') != 'never') {
     return 'event';
   }
   if (module_exists('date')) {
-    $date_field = variable_get('signup_date_field_'. $type, 0);
+    $date_field = variable_get('signup_date_field_' . $type, 0);
     if (!empty($date_field) && $date_field != 'none') {
       return 'date';
     }

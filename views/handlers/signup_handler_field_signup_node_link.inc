@@ -80,7 +80,7 @@ class signup_handler_field_signup_node_link extends views_handler_field_node_lin
   }
 
   function check_access($node, $tab) {
-    switch ($tab) {    
+    switch ($tab) {
       case 'signup':
         // Slightly complicated, since _signup_menu_access() is testing if we
         // want the signup tab, but here we just want to know if the user can

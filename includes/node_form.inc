@@ -53,7 +53,7 @@ function signup_save_node($node, $op) {
   // the node type), see if we need to insert a new record into the {signup}
   // table for this node using the site-wide defaults.
   $needs_defaults = FALSE;
-  if ((isset($node->signup_enabled) && $node->signup_enabled == 1) || (!isset($node->signup_enabled) && variable_get('signup_node_default_state_'. $node->type, 'disabled') == 'enabled_on')) {
+  if ((isset($node->signup_enabled) && $node->signup_enabled == 1) || (!isset($node->signup_enabled) && variable_get('signup_node_default_state_' . $node->type, 'disabled') == 'enabled_on')) {
     if ($op == 'insert') {
       $needs_defaults = TRUE;
     }
@@ -63,7 +63,7 @@ function signup_save_node($node, $op) {
       $needs_defaults = empty($has_record);
     }
   }
-  
+
   if ($needs_defaults) {
     $values = db_fetch_array(db_query("SELECT forwarding_email, send_confirmation, confirmation_email, close_signup_limit, send_reminder, reminder_days_before, reminder_email FROM {signup} WHERE nid = 0"));
     $values[] = $node->nid;
@@ -76,7 +76,7 @@ function signup_save_node($node, $op) {
     // advance time (e.g. someone just changed the node start time), and
     // signups are still open, close them now.
     signup_close_signup($node->nid);
-    drupal_set_message(t('%node_type start time is already past the signup close-in-advance time, signups now closed.', array('%node_type' => node_get_types('name', $node->type))));
+    drupal_set_message(t('%node_type start time is already past the signup close-in-advance time, signups now closed.', array('%node_type' => node_type_get_name($node->type))));
   }
 }
 
@@ -86,7 +86,7 @@ function signup_save_node($node, $op) {
 function signup_alter_node_form(&$form, &$form_state, $form_id) {
   global $user;
 
-  // Node is not saved but previewed (nid is empty). 
+  // Node is not saved but previewed (nid is empty).
   if (isset($form['#node']->build_mode) && $form['#node']->build_mode == NODE_BUILD_PREVIEW) {
     $node = $form['#node'];
   }
@@ -99,7 +99,7 @@ function signup_alter_node_form(&$form, &$form_state, $form_id) {
   }
   $node_type = $form['type']['#value'];
 
-  $signup_type_default = variable_get('signup_node_default_state_'. $node_type, 'disabled');
+  $signup_type_default = variable_get('signup_node_default_state_' . $node_type, 'disabled');
 
   // If signups are possible, and the current user either has the global
   // 'administer all signups' permission or has the 'administer signups
@@ -129,7 +129,7 @@ function signup_alter_node_form(&$form, &$form_state, $form_id) {
     $radio_options[1] = t('Enabled');
     if ($has_signups) {
       $radio_options[0] = t('Disabled, but save existing signup information');
-      $radio_options[2] = t('Disabled, and remove all signup information') .' <strong>('. t('This can not be undone, use with extreme caution!') .')</strong>';
+      $radio_options[2] = t('Disabled, and remove all signup information') . ' <strong>(' . t('This can not be undone, use with extreme caution!') . ')</strong>';
     }
     else {
       $radio_options[0] = t('Disabled');
@@ -147,7 +147,7 @@ function signup_alter_node_form(&$form, &$form_state, $form_id) {
       '#type' => 'radios',
       '#options' => $radio_options,
       '#default_value' => $default_option,
-      '#description' => t('If enabled, you can control whether users may sign up by visiting the !signup_admin tab and toggling if signups are %open or %closed for this %node_type. Other signup-related settings can be defined at the !signup_settings tab.', array('!signup_admin' => !empty($node->signup) ? l(t('Signups: Administer'), 'node/'. $node->nid .'/signups/admin') : theme('placeholder', t('Signups: Administer')), '!signup_settings' => !empty($node->signup) ? l(t('Signups: Settings'), 'node/'. $node->nid .'/signups/settings') : theme('placeholder', t('Signups: Settings')), '%open' => t('open'), '%closed' => t('closed'), '%node_type' => node_get_types('name', $node_type))),
+      '#description' => t('If enabled, you can control whether users may sign up by visiting the !signup_admin tab and toggling if signups are %open or %closed for this %node_type. Other signup-related settings can be defined at the !signup_settings tab.', array('!signup_admin' => !empty($node->signup) ? l(t('Signups: Administer'), 'node/' . $node->nid . '/signups/admin') : drupal_placeholder(t('Signups: Administer')), '!signup_settings' => !empty($node->signup) ? l(t('Signups: Settings'), 'node/' . $node->nid . '/signups/settings') : drupal_placeholder(t('Signups: Settings')), '%open' => t('open'), '%closed' => t('closed'), '%node_type' => node_type_get_name($node_type))),
     );
   }
 }

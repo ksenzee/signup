@@ -31,7 +31,7 @@ function theme_signup_admin_page($filter_status_form, $signup_admin_form) {
 }
 
 function theme_signup_filter_status_form($form) {
-  return '<div class="container-inline">'. drupal_render($form) .'</div>';
+  return '<div class="container-inline">' . drupal_render($form) . '</div>';
 }
 
 function theme_signup_admin_form($form) {
@@ -69,9 +69,9 @@ function theme_signup_admin_form($form) {
   }
   $header = $form['header']['#value'];
   unset($form['header']);
-  $output = theme('table', $header, $rows, array('style' => 'width:100%'));
+  $output = theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('style' => 'width:100%')));
   $output .= drupal_render($form);
-  $pager = theme('pager', NULL, 25, 0);
+  $pager = theme('pager', array('tags' => NULL, 'element' => 0));
   if (!empty($pager)) {
     $output .= $pager;
   }

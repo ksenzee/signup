@@ -17,7 +17,7 @@
  * @see theme_signup_custom_data_email()
  */
 function theme_signup_email_token_custom_data($signup_data) {
-  return t('SIGNUP INFORMATION') ."\n\r". theme('signup_custom_data_email', $signup_data);
+  return t('SIGNUP INFORMATION') . "\n\r" . theme('signup_custom_data_email', array('data' => $signup_data));
 }
 
 /**
@@ -42,10 +42,10 @@ function theme_signup_custom_data_email($data) {
     if (is_array($value)) {
       // Element is nested, render it recursively.
       // Instead of the overhead of theme(), just call ourself directly.
-      $output .= "\n\r". call_user_func(__FUNCTION__, $value) ."\n\r";
+      $output .= "\n\r" . call_user_func(__FUNCTION__, $value) . "\n\r";
     }
     else {
-      $output .= theme('signup_custom_data_field_text', $key, $value) ."\n\r";
+      $output .= theme('signup_custom_data_field_text', array('key' => $key, 'value' => $value)) . "\n\r";
     }
   }
   return $output;
@@ -71,7 +71,7 @@ function theme_signup_custom_data_field_text($key, $value) {
   // warnings when extracting strings, "hide" the call to t() by using a
   // variable to hold the function name.
   $tr = 't';
-  return $tr($key) .': '. $value;
+  return $tr($key) . ': ' . $value;
 }
 
 /**
@@ -86,12 +86,12 @@ function theme_signup_custom_data_field_text($key, $value) {
  *   The final text to put in the email body sent to the broadcast sender.
  */
 function theme_signup_broadcast_sender_copy($raw_message, $cooked_message) {
-  $output = t('This is a copy of the signup broadcast you just sent.') ."\n";
-  $output .= wordwrap(t('Here is the original text you entered, with none of the tokens replaced:'), 72) ."\n";
+  $output = t('This is a copy of the signup broadcast you just sent.') . "\n";
+  $output .= wordwrap(t('Here is the original text you entered, with none of the tokens replaced:'), 72) . "\n";
   $output .= "----------\n";
   $output .= $raw_message;
   $output .= "\n----------\n\n";
-  $output .= wordwrap(t('Here is how the message that was sent to each user looked, with all of the tokens replaced (using your account for the user-related tokens):'), 72) ."\n";
+  $output .= wordwrap(t('Here is how the message that was sent to each user looked, with all of the tokens replaced (using your account for the user-related tokens):'), 72) . "\n";
   $output .= "----------\n";
   $output .= $cooked_message;
   $output .= "\n----------\n\n";
