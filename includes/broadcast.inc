@@ -13,7 +13,7 @@
  * @param $node
  *   The node that the broadcast form is being attached to.
  */
-function signup_broadcast_form($form_state, $node) {
+function signup_broadcast_form($form, $form_state, $node) {
   $signups = signup_get_signups($node->nid);
   if (empty($signups)) {
     $form['no_users'] = array(

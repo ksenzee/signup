@@ -21,7 +21,8 @@ function signup_node_admin_page($node) {
   // based on if it's a certain kind of POST...
   if (empty($_POST['operation'])) {
     module_load_include('inc', 'signup', 'includes/node_admin_summary');
-    $signup_node_admin_summary_form = drupal_get_form('signup_node_admin_summary_form', $node);
+    $form = drupal_get_form('signup_node_admin_summary_form', $node);
+    $signup_node_admin_summary_form = drupal_render($form);
   }
   else {
     // We're either dealing with a validation error or on a confirm form, so
@@ -32,7 +33,8 @@ function signup_node_admin_page($node) {
   // Signup details table, including cancel checkboxes.
   $display_list = variable_get('signup_display_signup_admin_list', 'signup');
   if ($display_list == 'signup') {
-    $signup_node_admin_details_form = drupal_get_form('signup_node_admin_details_form', $node);
+    $form = drupal_get_form('signup_node_admin_details_form', $node);
+    $signup_node_admin_details_form = drupal_render($form);
   }
   elseif ($display_list == 'embed-view' && module_exists('views')) {
     $signup_view = _signup_get_admin_list_view();
@@ -52,12 +54,10 @@ function signup_node_admin_page($node) {
   return theme('signup_node_admin_page', array('node' => $node, 'signup_node_admin_summary_form' => $signup_node_admin_summary_form, 'signup_node_admin_details_form' => $signup_node_admin_details_form));
 }
 
-function signup_node_admin_details_form(&$form_state, $node) {
+function signup_node_admin_details_form($form, &$form_state, $node) {
   unset($_SESSION['signup_cancel_multiple_users']);
-  $form = array();
 
   // Prepare a table header that allows sorting on name and signup time.
-  // TODO Please change this theme call to use an associative array for the $variables parameter.
   $header = array(
     theme('table_select_header_cell'),
     array('data' => t('Name'), 'field' => 'u.name', 'sort' => 'asc'),
@@ -66,12 +66,17 @@ function signup_node_admin_details_form(&$form_state, $node) {
     array('data' => t('Attendance'), 'field' => 's.attended'),
   );
 
-  $sql = "SELECT u.uid, u.name, s.* FROM {signup_log} s INNER JOIN {users} u ON u.uid = s.uid WHERE s.nid = %d";
-  $sql .= tablesort_sql($header);
-  $result = db_query($sql, $node->nid);
+  $query = db_select('signup_log', 's')->extend('TableSort');
+  $query->join('users', 'u', 'u.uid = s.uid');
+  $result = $query
+    ->fields('u', array('uid', 'name'))
+    ->fields('s')
+    ->condition('s.nid', $node->nid)
+    ->orderByHeader($header)
+    ->execute();
 
   // Loop through the users, unserializing their user data.
-  while ($signed_up_user = db_fetch_object($result)) {
+  foreach ($result as $signed_up_user) {
     // The "username" to print is different for anon signups and registered
     // user signups.  For registered users, provide a link to the user profile
     // For anon, use the user's email address as the name.
@@ -167,8 +172,7 @@ function signup_node_admin_multiple_submit($form, &$form_state) {
 /**
  * Builds the confirm form when canceling multiple signups from node/N/signups.
  */
-function signup_cancel_multiple_confirm(&$form_state, $node) {
-  $form = array();
+function signup_cancel_multiple_confirm($form, &$form_state, $node) {
   $form['nid'] =  array(
     '#type' => 'hidden',
     '#value' => $node->nid,

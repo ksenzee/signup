@@ -28,7 +28,7 @@
  *   The form array for the per-node signup settings.
  *
  */
-function signup_node_settings_form($form_state, $node = NULL, $node_type = NULL, $has_date = FALSE, $include_buttons = FALSE) {
+function signup_node_settings_form($form, $form_state, $node = NULL, $node_type = NULL, $has_date = FALSE, $include_buttons = FALSE) {
   if (module_exists('token')) {
     $signup_token_description = t('Supported string substitutions: %node_title, %node_url, %node_start_time, %user_name, %user_mail, %user_signup_info (additional information from the signup form), %cancel_signup_url (access to this link is denied to users without the "%cancel_own_signups" permission), and any tokens in the %replacement_tokens list.', array('%replacement_tokens' => t('Replacement tokens'), '%cancel_own_signups' => t('cancel own signups')));
   }

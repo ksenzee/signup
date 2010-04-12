@@ -16,17 +16,21 @@
  * signup_node_admin_page()), and if the node is signup-enabled, the
  * form to signup other users.
  *
- * @param $node
- *   The node object for the signup-enabled node this is a tab on.
- * @param $signup_node_admin_summary_form
- *   The rendered HTML for the signup node summary form (to set the signup
- *   limit, open/close signups, see the total number of signups, etc).
- * @param $signup_node_admin_details_form
- *   The rendered HTML for the signup node details form (to view all the users
- *   who have signed up, their full signup details, and checkboxes to cancel
- *   multiple signups at once.
+ * @param $variables
+ *   An array of variables including:
+ *   - 'node': The node object for the signup-enabled node this is a tab on.
+ *   - 'signup_node_admin_summary_form': The rendered HTML for the signup node
+ *     summary form (to set the signup limit, open/close signups, see the total
+ *     number of signups, etc).
+ *   - 'signup_node_admin_details_form': The rendered HTML for the signup node
+ *     details form (to view all the users who have signed up, their full
+ *     signup details, and checkboxes to cancel multiple signups at once.
  */
-function theme_signup_node_admin_page($node, $signup_node_admin_summary_form, $signup_node_admin_details_form) {
+function theme_signup_node_admin_page($variables) {
+  $node = $variables['node'];
+  $signup_node_admin_summary_form = $variables['signup_node_admin_summary_form'];
+  $signup_node_admin_details_form = $variables['signup_node_admin_details_form'];
+
   $output = '';
 
   // Administrative summary table to control signups for this node.
@@ -41,7 +45,8 @@ function theme_signup_node_admin_page($node, $signup_node_admin_summary_form, $s
 /**
  * Renders the HTML for the per-node signup summary administrative form.
  */
-function theme_signup_node_admin_summary_form($form) {
+function theme_signup_node_admin_summary_form($variables) {
+  $form = $variables['form'];
   $output = '';
   $output .= '<div class="container-inline">' . drupal_render($form['status']);
   if (!empty($form['submit']) && $form['status']['#type'] == 'select') {
@@ -66,21 +71,26 @@ function theme_signup_node_admin_summary_form($form) {
       }
     }
   }
-  $output .= drupal_render($form);
+  $output .= drupal_render_children($form);
   $fieldset = array(
     '#title' => t('Signup summary'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
+    '#attributes' => array(),
+    '#children' => '',
     '#value' => $output,
   );
-  return theme('fieldset', $fieldset);
+  return theme('fieldset', array('element' => $fieldset));
 }
 
-function theme_signup_node_admin_details_form($form) {
+function theme_signup_node_admin_details_form($variables) {
+  $form = $variables['form'];
   $fieldset = array(
     '#title' => t('Signup details'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
+    '#attributes' => array(),
+    '#children' => '',
   );
   if (!empty($form['users']['#options'])) {
     $header = $form['#header'];
@@ -103,7 +113,7 @@ function theme_signup_node_admin_details_form($form) {
   else {
     $fieldset['#value'] = '<span>' . drupal_render($form['no_users']) . '</span>';
   }
-  return theme('fieldset', $fieldset) . drupal_render($form);
+  return theme('fieldset', array('element' => $fieldset)) . drupal_render_children($form);
 }
 
 /**
@@ -113,15 +123,17 @@ function theme_signup_node_admin_details_form($form) {
  * nested data), so if you override it, be sure not to change the part
  * where it does "call_user_func(__FUNCTION__)".
  *
- * @param $data
- *   Array of custom user signup data.
+ * @param $variables
+ *   An array of variables including:
+ *   - 'data': Array of custom user signup data.
  *
  * @return
  *   User data directly formatted in divs.
  *
  * @see theme_signup_user_form()
  */
-function theme_signup_custom_data($data) {
+function theme_signup_custom_data($variables) {
+  $data = $variables['data'];
   $output = '';
   // All of the possible array key values should already be translated as
   // string literals in theme_signup_user_form() via the #title attributes, so
@@ -145,7 +157,8 @@ function theme_signup_custom_data($data) {
   return $output;
 }
 
-function theme_signup_attended_text($attended = NULL) {
+function theme_signup_attended_text($variables) {
+  $attended = $variables['attended'];
   if ($attended === NULL) {
     return '';
   }

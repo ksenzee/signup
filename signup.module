@@ -34,16 +34,12 @@ function signup_theme() {
     'signup_filter_status_form' => array(
       'file' => 'admin.inc',
       'path' => $path,
-      'render element' => array(
-        'form' => NULL,
-      ),
+      'render element' => 'form',
     ),
     'signup_admin_form' => array(
       'file' => 'admin.inc',
       'path' => $path,
-      'render element' => array(
-        'form' => NULL,
-      ),
+      'render element' => 'form',
     ),
     'signup_email_token_custom_data' => array(
       'file' => 'email.inc',
@@ -104,16 +100,12 @@ function signup_theme() {
     'signup_node_admin_summary_form' => array(
       'file' => 'node.admin.inc',
       'path' => $path,
-      'render element' => array(
-        'form' => NULL,
-      ),
+      'render element' => 'form',
     ),
     'signup_node_admin_details_form' => array(
       'file' => 'node.admin.inc',
       'path' => $path,
-      'render element' => array(
-        'form' => NULL,
-      ),
+      'render element' => 'form',
     ),
     'signup_custom_data' => array(
       'file' => 'node.admin.inc',
