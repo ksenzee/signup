@@ -7,8 +7,7 @@
  * Code related to the signup administration tab on each node.
  */
 
-function signup_node_admin_summary_form($form_state, $node) {
-  $form = array();
+function signup_node_admin_summary_form($form, $form_state, $node) {
   if ($node->signup_close_signup_limit &&
     $node->signup_effective_total >= $node->signup_close_signup_limit
   ) {

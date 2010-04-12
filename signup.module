@@ -726,7 +726,7 @@ function signup_form_node_type_form_alter(&$form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Signup settings'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#collapsed' => FALSE,
   );
   $form['signup']['signup_node_default_state'] = array(
     '#type' => 'radios',
@@ -878,7 +878,7 @@ function signup_nodeapi_OLD(&$node, $op, $teaser = NULL, $page = NULL) { }
  * @see signup_nodeapi()
  */
 function _signup_needs_output($node) {
-  if (!$node->signup) {
+  if (empty($node->signup)) {
     // Not signup enabled at all.
     return FALSE;
   }
