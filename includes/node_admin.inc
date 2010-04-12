@@ -184,7 +184,7 @@ function signup_cancel_multiple_confirm($form, &$form_state, $node) {
   );
   $placeholders = db_placeholders($_SESSION['signup_cancel_multiple_users']);
   $query = db_query("SELECT u.name, u.uid, s.* FROM {signup_log} s INNER JOIN {users} u ON s.uid = u.uid WHERE s.sid IN (" . $placeholders . ")", $_SESSION['signup_cancel_multiple_users']);
-  while ($signup = db_fetch_object($query)) {
+  foreach ($query as $signup) {
     $key = $signup->sid;
     if ($signup->uid) {
       $label = theme('username', array('account' => $signup));

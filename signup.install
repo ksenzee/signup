@@ -164,20 +164,16 @@ function signup_schema() {
  * need to be removed.
  */
 function signup_install() {
-  // Create tables.
-  // TODO The drupal_(un)install_schema functions are called automatically in D7.;
-  // drupal_install_schema('signup');
   signup_insert_default_signup_info();
 }
 
+/**
+ * Implements hook_uninstall().
+ */
 function signup_uninstall() {
-  // Remove tables.
-  // TODO The drupal_(un)install_schema functions are called automatically in D7.;
-  // drupal_uninstall_schema('signup');
-
-  $variables = db_query("SELECT name FROM {variable} WHERE name LIKE 'signup%%'");
-  while ($variable = db_fetch_object($variables)) {
-    variable_del($variable->name);
+  $variables = db_query("SELECT name FROM {variable} WHERE name LIKE :name", array(':name' => 'signup%'))->fetchCol();
+  foreach ($variables as $variable) {
+    variable_del($variable);
   }
 }
 

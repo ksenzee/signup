@@ -47,13 +47,13 @@ function _signup_cron_send_reminders() {
 
     // Grab each node, construct the email header and subject, and query
     // the signup log to pull all users who are signed up for this node.
-    while ($node = db_fetch_object($result)) {
+    foreach ($result as $node) {
       $subject = t('!node_type reminder: !title', array('!node_type' => node_type_get_name($type), '!title' => $node->title));
       $signups = db_query("SELECT u.name, u.mail, s_l.sid, s_l.anon_mail, s_l.form_data FROM {signup_log} s_l INNER JOIN {users} u ON u.uid = s_l.uid WHERE s_l.nid = %d", $node->nid);
 
       // Loop through the users, composing their customized message
       // and sending the email.
-      while ($signup = db_fetch_object($signups)) {
+      foreach ($signups as $signup) {
         $user_mail = _signup_get_email($signup);
         $params = array(
           'subject' => $subject,
@@ -113,7 +113,7 @@ function _signup_cron_autoclose() {
     $result = db_query($sql, $type);
 
     // Loop through the results, calling the signup closing function.
-    while ($signup = db_fetch_object($result)) {
+    foreach ($result as $signup) {
       signup_close_signup($signup->nid, $cron = 'yes');
       $node = node_load($signup->nid);
       foreach (module_implements('signup_close') as $module) {

@@ -15,10 +15,9 @@ function signup_cancel_signup_page($signup, $token) {
   drupal_goto();
 }
 
-function signup_cancel_link_confirm_form($form_state, $sid) {
-  $info = db_fetch_object(db_query("SELECT n.nid, n.title, s.* FROM {node} n INNER JOIN {signup_log} s ON n.nid = s.nid WHERE s.sid = %d", $sid));
+function signup_cancel_link_confirm_form($form, $form_state, $sid) {
+  $info = db_query("SELECT n.nid, n.title, s.* FROM {node} n INNER JOIN {signup_log} s ON n.nid = s.nid WHERE s.sid = :sid", array(':sid' => $sid))->fetchObject();
 
-  $form = array();
   $form['sid'] = array(
     '#type' => 'hidden',
     '#value' => $sid,

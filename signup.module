@@ -994,7 +994,7 @@ function signup_object_info() {
  *   Fully loaded $signup object corresponding to the given ID.
  */
 function signup_load_signup($sid) {
-  $signup = db_fetch_object(db_query("SELECT sl.*, n.title, u.name, u.mail FROM {signup_log} sl INNER JOIN {node} n ON sl.nid = n.nid INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.sid = %d", $sid));
+  $signup = db_query("SELECT sl.*, n.title, u.name, u.mail FROM {signup_log} sl INNER JOIN {node} n ON sl.nid = n.nid INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.sid = :sid", array(':sid' => $sid))->fetchObject();
   if (!empty($signup)) {
     // This label is escaped by VBO, so it needs to be plain text, not HTML.
     $signup->label = t("!user signup for '!title'", array('!user' => $signup->name, '!title' => $signup->title));
@@ -1056,8 +1056,8 @@ function signup_save_signup(&$signup) {
  */
 function signup_get_signups($nid) {
   $signups = array();
-  $query = db_query("SELECT u.uid, u.name, u.mail, u.language, s_l.* FROM {signup_log} s_l INNER JOIN {users} u ON u.uid = s_l.uid WHERE s_l.nid = %d", $nid);
-  while ($signup = db_fetch_object($query)) {
+  $result = db_query("SELECT u.uid, u.name, u.mail, u.language, s_l.* FROM {signup_log} s_l INNER JOIN {users} u ON u.uid = s_l.uid WHERE s_l.nid = :nid", array(':nid' => $nid));
+  foreach ($result as $signup) {
     $signups[] = $signup;
   }
   return $signups;
@@ -1102,8 +1102,8 @@ function signup_content_extra_fields($type_name) {
 function signup_cancel_signup($signup, $notify_user = TRUE) {
   // If we only have a numeric sid argument, load the full signup object.
   if (is_numeric($signup)) {
-    $query = db_query('SELECT * FROM {signup_log} WHERE sid = %d', $signup);
-    $signup = db_fetch_object($query);
+    $query = db_query('SELECT * FROM {signup_log} WHERE sid = :sid', array(':sid' => $signup));
+    $signup = $query->fetchObject();
   }
 
   $node = node_load($signup->nid);
@@ -1151,7 +1151,7 @@ function signup_valid_token($token, $sid, $operation) {
  * @ingroup signup_callback
  */
 function signup_close_signup($nid, $cron = 'no') {
-  db_query("UPDATE {signup} SET status = 0 WHERE nid = %d", $nid);
+  db_query("UPDATE {signup} SET status = 0 WHERE nid = :nid", array(':nid' => $nid));
   if ($cron == 'no') {
     $node = node_load($nid);
     foreach (module_implements('signup_close') as $module) {
@@ -1167,7 +1167,7 @@ function signup_close_signup($nid, $cron = 'no') {
  * @ingroup signup_callback
  */
 function signup_open_signup($nid, $cron = 'no') {
-  db_query("UPDATE {signup} SET status = 1 WHERE nid = %d", $nid);
+  db_query("UPDATE {signup} SET status = 1 WHERE nid = :nid", array(':nid' => $nid));
   if ($cron == 'no') {
     $node = node_load($nid);
     foreach (module_implements('signup_open') as $module) {
@@ -1243,8 +1243,8 @@ function signup_sign_up_user($signup_form, $notify_user = TRUE) {
     // This query does the JOIN on {users} so we can avoid a full
     // user_load() just so theme('username') can have the data it
     // needs for the error message we might print out.
-    $result = db_query("SELECT sl.uid, u.name FROM {signup_log} sl INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.uid = %d AND sl.nid = %d", $signup_form['uid'], $signup_form['nid']);
-    $account = db_fetch_object($result);
+    $result = db_query("SELECT sl.uid, u.name FROM {signup_log} sl INNER JOIN {users} u ON sl.uid = u.uid WHERE sl.uid = :uid AND sl.nid = :nid", array(':uid' => $signup_form['uid'], ':nid' => $signup_form['nid']));
+    $account = $result->fetchObject();
     if (!empty($account)) {
       drupal_set_message(t('User !user is already signed up for %title', array('!user' => theme('username', array('account' => $account)), '%title' => $node->title)), 'error');
       return FALSE;

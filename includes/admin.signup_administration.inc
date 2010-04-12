@@ -83,7 +83,7 @@ function signup_admin_form($form, $form_state) {
   $result = pager_query($sql, 25, 0, $sql_count);
 
   // Loop through the signup nodes, and generate our form elements
-  while ($signup_node = db_fetch_object($result)) {
+  foreach ($result as $signup_node) {
     $row = array();
     if (!empty($start_column)) {
       $row['start'] = signup_admin_form_extra($signup_node);
