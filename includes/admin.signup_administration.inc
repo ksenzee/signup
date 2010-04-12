@@ -95,14 +95,12 @@ function signup_admin_form($form, $form_state) {
     module_load_include('inc', 'signup', 'includes/node_admin_summary');
     $node_admin_form = signup_node_admin_summary_form(array(), $signup_node);
     $row['title'] = array(
-      '#type' => 'markup',
-      '#value' => l($signup_node->title, "node/$signup_node->nid"),
+      '#markup' => l($signup_node->title, "node/$signup_node->nid"),
     );
     $row['status'] = $node_admin_form['status'];
     unset($row['status']['#title']);
     $row['total'] = array(
-      '#type' => 'markup',
-      '#value' => $signup_node->signup_total,
+      '#markup' => $signup_node->signup_total,
     );
     $row['limit'] = $node_admin_form['limit'];
     unset($row['limit']['#title']);
@@ -113,8 +111,7 @@ function signup_admin_form($form, $form_state) {
       $op_links .= l(t('Signup broadcast'), "node/$signup_node->nid/signups/broadcast", $options);
     }
     $row['operations'] = array(
-      '#type' => 'markup',
-      '#value' => $op_links,
+      '#markup' => $op_links,
     );
     $form['nids'][$signup_node->nid] = $row;
   }
@@ -142,8 +139,7 @@ function signup_admin_form_header() {
 
 function signup_admin_form_extra($signup_node) {
   return array(
-    '#type' => 'markup',
-    '#value' => signup_format_date($signup_node),
+    '#markup' => signup_format_date($signup_node),
   );
 }
 

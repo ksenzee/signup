@@ -24,7 +24,7 @@ function _signup_token_help(&$form, $element_name) {
     '#collapsed' => TRUE,
   );
   $form[$element_name]['help_text'] = array(
-    '#value' => _signup_build_token_help(),
+    '#markup' => _signup_build_token_help(),
   );
 }
 

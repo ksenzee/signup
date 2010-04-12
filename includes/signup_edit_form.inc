@@ -51,8 +51,7 @@ function signup_edit_form($form_state, $signup, $type) {
   else {
     $form['elements'] = array();
     $form['elements']['header'] = array(
-      '#type' => 'markup',
-      '#value' => $title,
+      '#markup' => $title,
       '#prefix' => '<h4>',
       '#suffix' => '</h4>',
     );
@@ -121,8 +120,7 @@ function signup_edit_form($form_state, $signup, $type) {
     }
     $signup_token = signup_get_token($signup->sid, 'cancel');
     $form['elements']['cancel-signup'] = array(
-      '#type' => 'markup',
-      '#value' => l(t('Cancel signup'), "signup/cancel/$signup->sid/$signup_token", array('query' => $destination)),
+      '#markup' => l(t('Cancel signup'), "signup/cancel/$signup->sid/$signup_token", array('query' => $destination)),
     );
   }
 

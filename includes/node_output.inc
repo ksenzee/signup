@@ -63,7 +63,8 @@ function _signup_current_user_signup($node, $type = 'node') {
       if (user_access('sign up for content')) {
         // If they can signup, render the anonymous sigup form.
         module_load_include('inc', 'signup', 'includes/signup_form');
-        $output .= drupal_get_form('signup_form', $node, 'anon', $fieldset);
+        $form = drupal_get_form('signup_form', $node, 'anon', $fieldset);
+        $output .= drupal_render($form);
       }
       else {
         // If not, then display the appropriate login/register link if the
@@ -96,7 +97,8 @@ function _signup_current_user_signup($node, $type = 'node') {
         if (user_access('sign up for content')) {
           // User has permission to do so, so give them the form.
           module_load_include('inc', 'signup', 'includes/signup_form');
-          $output .= drupal_get_form('signup_form', $node, 'auth', $fieldset);
+          $form = drupal_get_form('signup_form', $node, 'auth', $fieldset);
+          $output .= drupal_render($form);
         }
       }
       else {
@@ -188,6 +190,6 @@ function _signup_render_signup_edit_form($signup, $type) {
   $form = drupal_get_form('signup_edit_form', $signup, $type);
   $form_errors = form_get_errors() ? TRUE : FALSE;
   drupal_add_js(array('signupEditFormErrors' => $form_errors), array('type' => 'setting', 'scope' => JS_DEFAULT));
-  return $form;
+  return drupal_render($form);
 }
 

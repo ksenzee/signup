@@ -88,13 +88,13 @@ function signup_node_admin_details_form($form, &$form_state, $node) {
     }
     $key = $signed_up_user->sid;
     $users[$key] = '';
-    $form['username'][$key] = array('#value' => $username);
-    $form['signup_date'][$key] = array('#value' => format_date($signed_up_user->signup_time, variable_get('signup_date_format', 'small')));
-    $form['signup_form_data'][$key] = array('#value' => theme('signup_custom_data', array('data' => unserialize($signed_up_user->form_data))));
-    $form['attended'][$key] = array('#value' => theme('signup_attended_text', array('attended' => $signed_up_user->attended)));
+    $form['username'][$key] = array('#markup' => $username);
+    $form['signup_date'][$key] = array('#markup' => format_date($signed_up_user->signup_time, variable_get('signup_date_format', 'small')));
+    $form['signup_form_data'][$key] = array('#markup' => theme('signup_custom_data', array('data' => unserialize($signed_up_user->form_data))));
+    $form['attended'][$key] = array('#markup' => theme('signup_attended_text', array('attended' => $signed_up_user->attended)));
   }
   if (empty($users)) {
-    $form['no_users'] = array('#value' => t('No users have signed up for this %node_type.', array('%node_type' => node_type_get_name($node->type))));
+    $form['no_users'] = array('#markup' => t('No users have signed up for this %node_type.', array('%node_type' => node_type_get_name($node->type))));
   }
   else {
     $form['nid'] = array(

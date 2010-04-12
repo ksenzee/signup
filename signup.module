@@ -827,7 +827,7 @@ function signup_node_view($node, $view_mode = 'full') {
           $weight = variable_get('signup_info_node_weight_' . $node->type, 10);
         }
         $node->content['signup'] = array(
-              '#value' => $signup_info,
+              '#markup' => $signup_info,
               '#weight' => $weight,
             );
       }
@@ -844,7 +844,7 @@ function signup_node_view($node, $view_mode = 'full') {
           $weight = variable_get('signup_list_node_weight_' . $node->type, 11);
         }
         $node->content['signup_list'] = array(
-              '#value' => $signup_list,
+              '#markup' => $signup_list,
               '#weight' => $weight,
             );
       }

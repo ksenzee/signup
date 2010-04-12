@@ -17,7 +17,7 @@ function signup_broadcast_form($form, $form_state, $node) {
   $signups = signup_get_signups($node->nid);
   if (empty($signups)) {
     $form['no_users'] = array(
-      '#value' => t('No users have signup up for this %node_type.', array('%node_type' => node_type_get_name($node->type))),
+      '#markup' => t('No users have signup up for this %node_type.', array('%node_type' => node_type_get_name($node->type))),
     );
     return $form;
   }
@@ -77,7 +77,7 @@ function signup_broadcast_form($form, $form_state, $node) {
   }
   else {
     $form['from'] = array(
-      '#value' => t('This message will be sent from: %from', array('%from' => $user->mail)),
+      '#markup' => t('This message will be sent from: %from', array('%from' => $user->mail)),
       '#pre' => '<strong>',
       '#post' => '</strong>',
     );
