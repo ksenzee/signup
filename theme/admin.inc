@@ -16,17 +16,19 @@
  * results by signup status, which is rendered at the top of the page by
  * default.
  *
- * @param $filter_status_form
- *   HTML representation of the signup status filter form.
- * @param $signup_admin_form
- *   HTML representation of the main signup administration form.
+ * @param $variables
+ *   An array of variables containing:
+ *   - 'filter_status_form': HTML representation of the signup status filter
+ *     form.
+ *   - 'signup_admin_form': HTML representation of the main signup
+ *     administration form.
  *
  * @return
  *   Themed output for the signup administration overview page.
  */
-function theme_signup_admin_page($filter_status_form, $signup_admin_form) {
-  $output = $filter_status_form;
-  $output .= $signup_admin_form;
+function theme_signup_admin_page($variables) {
+  $output = $variables['filter_status_form'];
+  $output .= $variables['signup_admin_form'];
   return $output;
 }
 

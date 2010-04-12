@@ -11,16 +11,22 @@
  * Print the admin signup overview page located at admin/content/signup.
  */
 function signup_admin_page() {
-  drupal_add_css(drupal_get_path('module', 'signup') . '/signup.css');
   $filter_status_form = drupal_get_form('signup_filter_status_form');
   $signup_admin_form = drupal_get_form('signup_admin_form');
-  return theme('signup_admin_page', array('filter_status_form' => $filter_status_form, 'signup_admin_form' => $signup_admin_form));
+  return array(
+    '#theme' => 'signup_admin_page',
+    '#attached' => array(
+      'css' => drupal_get_path('module', 'signup') . '/signup.css',
+    ),
+    '#filter_status_form' => $filter_status_form,
+    '#signup_admin_form' => $signup_admin_form,
+  );
 }
 
 /**
  * Form builder for the signup status filter on the signup administration page.
  */
-function signup_filter_status_form(&$form_state) {
+function signup_filter_status_form($form, &$form_state) {
   $options = array(
     'all' => t('All'),
     'open' => t('Open'),
@@ -50,7 +56,7 @@ function signup_filter_status_form_submit($form, &$form_state) {
 /**
  * Form builder for the main form on the signup administration page.
  */
-function signup_admin_form($form_state) {
+function signup_admin_form($form, $form_state) {
   // Figure out if the current user has permission to use signup broadcast.
   $access_broadcast = user_access('email all signed up users');
 
@@ -71,7 +77,8 @@ function signup_admin_form($form_state) {
 
   $form['header']['#value'] = $header;
 
-  $sql .= tablesort_sql($header);
+  // TODO: Add this back using correct D7 methods.
+  // $sql .= tablesort_sql($header);
 
   $result = pager_query($sql, 25, 0, $sql_count);
 
@@ -190,7 +197,9 @@ function signup_admin_form_sql() {
     $sql_count .= ' WHERE ' . implode(' AND ', $all_fragments['where']);
   }
 
-  return array(db_rewrite_sql($sql), db_rewrite_sql($sql_count, 's'));
+  // TODO: This should be a dynamic query tagged 'node_access'.
+  return array($sql, $sql_count);
+  // return array(db_rewrite_sql($sql), db_rewrite_sql($sql_count, 's'));
 }
 
 function signup_admin_form_submit($form, &$form_state) {
