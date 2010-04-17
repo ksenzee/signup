@@ -128,10 +128,11 @@ function signup_list_user_signups($uid) {
 
   // We don't want to return anything for anon users.
   if ($uid != 0) {
-    $sql = "SELECT n.nid, n.title FROM {node} n INNER JOIN {signup_log} s_l ON n.nid = s_l.nid WHERE s_l.uid = %d ORDER BY n.nid";
-    $result = db_query(db_rewrite_sql($sql), $uid);
-    while ($node = db_fetch_array($result)) {
-      $titles[$node['nid']] = l($node['title'], 'node/' . $node['nid']);
+    $sql = "SELECT n.nid, n.title FROM {node} n INNER JOIN {signup_log} s_l ON n.nid = s_l.nid WHERE s_l.uid = :uid ORDER BY n.nid";
+    // TODO: add back the equivalent of db_rewrite_sql().
+    $result = db_query($sql, array(':uid' => $uid));
+    foreach ($result as $node) {
+      $titles[$node->nid] = l($node->title, 'node/' . $node->nid);
     }
   }
   return $titles;
