@@ -32,6 +32,7 @@ function signup_block_info() {
 }
 
 function signup_block_view($delta = '') {
+  global $user;
   $titles = signup_list_user_signups($user->uid);
   if (count($titles)) {
     $block['subject'] = t('Current signups');
