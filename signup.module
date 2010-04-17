@@ -13,6 +13,9 @@
  * information, see the README.txt and INSTALL.txt files in this directory.
  */
 
+// TODO: Remove this hack.
+include_once drupal_get_path('module', 'signup') . '/includes/no_views.inc';
+
 /**
  * @defgroup signup_core Core drupal hooks
  */
