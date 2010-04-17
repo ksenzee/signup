@@ -26,26 +26,16 @@
  *   One of two possibilities. The first is an array of available blocks.
  *   The other is an array containing a block.
  */
-function signup_block_OLD($op = 'list', $delta = 0) {
-  // TODO Remaining code in this function needs to be moved to the appropriate new hook function.
-  global $user;
-  switch ($op) {
-    case 'list':
-      $blocks[0]['info'] = t('Current signups');
-      return $blocks;
-      break;
-    case 'view':
-      if (user_access('access content')) {
-        switch ($delta) {
-          case 0:
-            $titles = signup_list_user_signups($user->uid);
-            if (count($titles)) {
-              $block['subject'] = t('Current signups');
-              $block['content'] = theme_item_list($titles) . l(t('View signup schedule'), "user/$user->uid/signups");
-            }
-            return $block;
-        }
-      }
+function signup_block_info() {
+  $blocks[0]['info'] = t('Current signups');
+  return $blocks; 
+}
+
+function signup_block_view($delta = '') {
+  $titles = signup_list_user_signups($user->uid);
+  if (count($titles)) {
+    $block['subject'] = t('Current signups');
+    $block['content'] = theme_item_list($titles) . l(t('View signup schedule'), "user/$user->uid/signups");
   }
 }
 
