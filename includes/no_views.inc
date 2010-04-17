@@ -27,7 +27,7 @@
  *   The other is an array containing a block.
  */
 function signup_block_info() {
-  $blocks[0]['info'] = t('Current signups');
+  $blocks['current']['info'] = t('Current signups');
   return $blocks; 
 }
 
@@ -36,6 +36,7 @@ function signup_block_view($delta = '') {
   if (count($titles)) {
     $block['subject'] = t('Current signups');
     $block['content'] = theme_item_list($titles) . l(t('View signup schedule'), "user/$user->uid/signups");
+    return $block;
   }
 }
 
