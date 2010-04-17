@@ -36,7 +36,7 @@ function signup_block_view($delta = '') {
   $titles = signup_list_user_signups($user->uid);
   if (count($titles)) {
     $block['subject'] = t('Current signups');
-    $block['content'] = theme_item_list($titles) . l(t('View signup schedule'), "user/$user->uid/signups");
+    $block['content'] = theme('item_list', array('items' => $titles)) . l(t('View signup schedule'), "user/$user->uid/signups");
     return $block;
   }
 }

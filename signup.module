@@ -1255,7 +1255,7 @@ function signup_sign_up_user($signup_form, $notify_user = TRUE) {
   }
 
   // If we made it this far, we're going to need the full user object.
-  $account = user_load_multiple(array($signup_form['uid']));
+  $account = user_load($signup_form['uid']);
 
   if ($node->signup_status) {
     // Grab the current time once, since we need it in a few places.
