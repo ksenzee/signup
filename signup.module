@@ -351,9 +351,13 @@ function signup_menu() {
   $items['node/%node/signup'] = array(
     'title' => 'Sign up',
     'type' => MENU_LOCAL_ACTION,
+    'page callback' => '_signup_current_user_signup',
+    'page arguments' => array(1, 'tab'),
     'access callback' => '_signup_menu_access',
     'access arguments' => array(1, 'signup'),
     'weight' => -10,
+    'file' => 'node_output.inc',
+    'file path' => $path,
   );
   $items['node/%node/signups/list'] = array(
     'title' => 'List',
@@ -574,12 +578,9 @@ function _signup_menu_signup_access($signup, $op) {
  * Menu callback to handle the default tab at node/N/signups
  *
  * This tests the user's permission to see what tab they should really see.
- * If they have permission to signup for nodes and the site is configured to
- * put the signup form on a separate tab from the node itself, display the
- * current user's signup info (either a form to signup, or their current
- * signup).  If not, see if they can view a signup user list, and redirect
- * there.  If not, see if they can administer signups and redirect there.
- * Finally, if they can at least send a signup broadcast, go there.
+ * First, see if they can view a signup user list, and redirect there. If not,
+ * see if they can administer signups and redirect there. Finally, if they can
+ * at least send a signup broadcast, go there.
  *
  * @param $node
  *   Fully loaded node object to generate the node/N/signup menu handler for.
@@ -589,35 +590,27 @@ function _signup_menu_signup_access($signup, $op) {
  *
  * @see signup_menu()
  * @see _signup_menu_access()
- * @see _signup_current_user_signup();
  */
 function signup_node_tab_page($node) {
-  $signup = _signup_menu_access($node, 'signup');
   $list = _signup_menu_access($node, 'list-tab');
   $admin = _signup_menu_access($node, 'admin');
   $broadcast = _signup_menu_access($node, 'broadcast');
-  if ($signup) {
-    module_load_include('inc', 'signup', 'includes/node_output');
-    return _signup_current_user_signup($node, 'tab');
+  $options = array();
+  if (isset($_GET['destination'])) {
+    // If we have a redirect destination, we don't want drupal_goto() to send
+    // us there yet, but rather send us to the desired page and preserve the
+    // destination for next time.
+    $options = array('query' => drupal_get_destination());
+    unset($_GET['destination']);
   }
-  else {
-    $options = array();
-    if (isset($_GET['destination'])) {
-      // If we have a redirect destination, we don't want drupal_goto() to send
-      // us there yet, but rather send us to the desired page and preserve the
-      // destination for next time.
-      $options = array('query' => drupal_get_destination());
-      unset($_GET['destination']);
-    }
-    if ($list) {
-      drupal_goto("node/$node->nid/signups/list", $options);
-    }
-    elseif ($admin) {
-      drupal_goto("node/$node->nid/signups/admin", $options);
-    }
-    elseif ($broadcast) {
-      drupal_goto("node/$node->nid/signups-broadcast", $options);
-    }
+  if ($list) {
+    drupal_goto("node/$node->nid/signups/list", $options);
+  }
+  elseif ($admin) {
+    drupal_goto("node/$node->nid/signups/admin", $options);
+  }
+  elseif ($broadcast) {
+    drupal_goto("node/$node->nid/signups-broadcast", $options);
   }
 }
 
