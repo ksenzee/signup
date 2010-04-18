@@ -108,7 +108,7 @@ function signup_admin_form($form, $form_state) {
     if ($access_broadcast) {
       $op_links .= '<br />';
       $options['attributes']['title'] = t('Send an email message to all users who signed up.');
-      $op_links .= l(t('Signup broadcast'), "node/$signup_node->nid/signups/broadcast", $options);
+      $op_links .= l(t('Signup broadcast'), "node/$signup_node->nid/signups-broadcast", $options);
     }
     $row['operations'] = array(
       '#markup' => $op_links,
