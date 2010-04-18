@@ -640,31 +640,31 @@ function _signup_initialize_scheduler_backend() {
 function signup_permission() {
   return array(
     'sign up for content' => array(
-      'title' => t('sign up for content'),
+      'title' => t('Sign up for content'),
     ),
     'cancel signups' => array(
-      'title' => t('cancel signups'),
+      'title' => t('Cancel signups'),
     ),
     'cancel own signups' => array(
-      'title' => t('cancel own signups'),
+      'title' => t('Cancel own signups'),
     ),
     'edit own signups' => array(
-      'title' => t('edit own signups'),
+      'title' => t('Edit own signups'),
     ),
     'view all signups' => array(
-      'title' => t('view all signups'),
+      'title' => t('View all signups'),
     ),
     'administer all signups' => array(
-      'title' => t('administer all signups'),
+      'title' => t('Administer all signups'),
     ),
     'administer signups for own content' => array(
-      'title' => t('administer signups for own content'),
+      'title' => t('Administer signups for own content'),
     ),
     'email users signed up for own content' => array(
-      'title' => t('email users signed up for own content'),
+      'title' => t('Email users signed up for own content'),
     ),
     'email all signed up users' => array(
-      'title' => t('email all signed up users'),
+      'title' => t('Email all signed up users'),
     ),
   );
 }
