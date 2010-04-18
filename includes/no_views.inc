@@ -32,48 +32,48 @@ function signup_block_info() {
 }
 
 function signup_block_view($delta = '') {
-  global $user;
-  $titles = signup_list_user_signups($user->uid);
-  if (count($titles)) {
-    $block['subject'] = t('Current signups');
-    $block['content'] = theme('item_list', array('items' => $titles)) . l(t('View signup schedule'), "user/$user->uid/signups");
-    return $block;
+  switch ($delta) {
+    case 'current':
+      global $user;
+      $titles = signup_list_user_signups($user->uid);
+      if (count($titles)) {
+        $block['subject'] = t('Current signups');
+        $block['content'] = theme('item_list', array('items' => $titles)) . l(t('View signup schedule'), "user/$user->uid/signups");
+        return $block;
+      }
+      break;
   }
 }
 
 /**
- * Private helper as a partial implementation of hook_user().
+ * Private helper as a partial implementation of hook_user_view().
  *
- * @see signup_user()
+ * @see signup_user_view()
  */
-function _signup_user_no_views($op, &$edit, &$user, $category = NULL) {
-  switch ($op) {
-    case 'view':
-      // grab list of nodes the user signed up for.
-      $signups = signup_list_user_signups($user->uid);
-      if (count($signups) && variable_get('signup_no_views_user_info', TRUE)) {
-        $user->content['signup'] = array(
-          '#type' => 'user_profile_category',
-          '#attributes' => array('class' => 'signup'),
-          '#weight' => 5,
-          '#title' => t('Signup information'),
-        );
-        $user->content['signup']['current'] = array(
-          '#type' => 'user_profile_item',
-          '#attributes' => array('class' => 'signup-current'),
-          '#title' => t('Current signups'),
-          '#value' => theme_item_list($signups),
-          '#weight' => 0,
-        );
-        $user->content['signup']['schedule'] = array(
-          '#type' => 'user_profile_item',
-          '#attributes' => array('class' => 'signup-schedule'),
-          '#title' => t('Signup schedule'),
-          '#value' => l(t('View full signup schedule'), 'user/' . $user->uid . '/signups'),
-          '#weight' => 2,
-        );
-      }
-      break;
+function _signup_user_view_no_views(&$account, $view_mode) {
+  // grab list of nodes the user signed up for.
+  $signups = signup_list_user_signups($account->uid);
+  if (count($signups) && variable_get('signup_no_views_user_info', TRUE)) {
+    $account->content['signup'] = array(
+      '#type' => 'user_profile_category',
+      '#attributes' => array('class' => 'signup'),
+      '#weight' => 5,
+      '#title' => t('Signup information'),
+    );
+    $account->content['signup']['current'] = array(
+      '#type' => 'user_profile_item',
+      '#attributes' => array('class' => 'signup-current'),
+      '#title' => t('Current signups'),
+      '#value' => theme_item_list($signups),
+      '#weight' => 0,
+    );
+    $account->content['signup']['schedule'] = array(
+      '#type' => 'user_profile_item',
+      '#attributes' => array('class' => 'signup-schedule'),
+      '#title' => t('Signup schedule'),
+      '#value' => l(t('View full signup schedule'), 'user/' . $account->uid . '/signups'),
+      '#weight' => 2,
+    );
   }
 }
 
