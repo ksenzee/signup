@@ -599,14 +599,24 @@ function signup_node_tab_page($node) {
     module_load_include('inc', 'signup', 'includes/node_output');
     return _signup_current_user_signup($node, 'tab');
   }
-  elseif ($list) {
-    drupal_goto("node/$node->nid/signups/list");
-  }
-  elseif ($admin) {
-    drupal_goto("node/$node->nid/signups/admin");
-  }
-  elseif ($broadcast) {
-    drupal_goto("node/$node->nid/signups/broadcast");
+  else {
+    $options = array();
+    if (isset($_GET['destination'])) {
+      // If we have a redirect destination, we don't want drupal_goto() to send
+      // us there yet, but rather send us to the desired page and preserve the
+      // destination for next time.
+      $options = array('query' => drupal_get_destination());
+      unset($_GET['destination']);
+    }
+    if ($list) {
+      drupal_goto("node/$node->nid/signups/list", $options);
+    }
+    elseif ($admin) {
+      drupal_goto("node/$node->nid/signups/admin", $options);
+    }
+    elseif ($broadcast) {
+      drupal_goto("node/$node->nid/signups/broadcast", $options);
+    }
   }
 }
 
