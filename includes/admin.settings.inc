@@ -198,7 +198,20 @@ function signup_settings_form() {
  */
 function signup_settings_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == t('Save configuration') && db_result(db_query('SELECT COUNT(*) FROM {signup} WHERE nid = 0'))) {
+  if ($op == t('Save configuration') && db_query('SELECT COUNT(*) FROM {signup} WHERE nid = 0')->fetchField()) {
+    db_update('signup')
+      ->fields(array(
+          'forwarding_email' => $form_state['values']['signup_forwarding_email'],
+          'send_confirmation' => $form_state['values']['signup_send_confirmation'],
+          'confirmation_email' => $form_state['values']['signup_confirmation_email'],
+          'close_signup_limit' => $form_state['values']['signup_close_signup_limit'],
+          'reminder_days_before' => isset($form_state['values']['signup_reminder_days_before']) ? $form_state['values']['signup_reminder_days_before'] : 0,
+          'send_reminder' => isset($form_state['values']['signup_send_reminder']) ? $form_state['values']['signup_send_reminder'] : 0,
+          'reminder_email' => isset($form_state['values']['signup_reminder_email']) ? $form_state['values']['signup_reminder_email'] : '',
+        ))
+      ->condition('nid', 0)
+      ->execute();
+      /*
     $values = array(
       $form_state['values']['signup_forwarding_email'],
       $form_state['values']['signup_send_confirmation'],
@@ -210,10 +223,14 @@ function signup_settings_form_submit($form, &$form_state) {
     $values[] = isset($form_state['values']['signup_reminder_email']) ? $form_state['values']['signup_reminder_email'] : '';
     $values[] = 0; // "nid" of the row in {signup} for the global settings.
     db_query("UPDATE {signup} SET forwarding_email = '%s', send_confirmation = %d, confirmation_email = '%s', close_signup_limit = %d, send_reminder = %d, reminder_days_before = %d, reminder_email = '%s' WHERE nid = %d", $values);
+       *
+       */
   }
   else {
     module_load_include('install', 'signup', 'signup');
-    db_query("DELETE FROM {signup} WHERE nid = 0");
+    db_delete('signup')
+      ->condition('nid', 0)
+      ->execute();
     signup_insert_default_signup_info();
   }
 
