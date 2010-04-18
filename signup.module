@@ -666,7 +666,13 @@ function signup_permission() {
 }
 
 /**
- * Implements hook_user_cancel.
+ * Implements hook_user_cancel().
+ *
+ * When a user is deleted, cancel all of that user's signups to remove all
+ * instances of that user from the {signup_log} table, free up space in nodes
+ * with signup limits, etc.
+ *
+ * @ingroup signup_core
  */
 function signup_user_cancel($edit, $account, $method) {
   $uids = array();
@@ -688,22 +694,18 @@ function signup_user_cancel($edit, $account, $method) {
 }
 
 /**
- * Implements hook_user().
+ * Implement hook_user_view().
  *
- * When a user is deleted, cancel all of that user's signups to remove all
- * instances of that user from the {signup_log} table, free up space in nodes
- * with signup limits, etc.
- *
+ * @see _signup_user_view()
  * @ingroup signup_core
  */
-function signup_user_OLD($type, &$edit, &$user, $category = NULL) {
-  // TODO Remaining code in this function needs to be moved to the appropriate new hook function.
-  // If we're not using views, we need to support additional user
+function signup_user_view($account, $view_mode) {
+  // If we're not using views, we need to support additional user view
   // operations, for example, to add the user's current signup
   // schedule to their user profile page.
   if (!module_exists('views')) {
     module_load_include('inc', 'signup', 'includes/no_views');
-    return _signup_user_no_views($type, $edit, $user, $category);
+    return _signup_user_view_no_views($account, $view_mode);
   }
 }
 
