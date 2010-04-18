@@ -121,6 +121,7 @@ function signup_alter_node_form(&$form, &$form_state, $form_id) {
     $form['signup'] = array(
       '#type' => 'fieldset',
       '#title' => t('Signup settings'),
+      '#group' => 'additional_settings',
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
       '#weight' => 30,
