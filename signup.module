@@ -1795,3 +1795,15 @@ function signup_token_values($type = 'all', $object = NULL) {
   }
   return $values;
 }
+
+function signup_admin_paths() {
+  $paths = array(
+    'signup/cancel/*' => TRUE,
+    'signup/edit/*' => TRUE,
+    'node/*/signups' => TRUE,
+    'node/*/signups/*' => TRUE,
+    'node/*/signups-add' => TRUE,
+    'node/*/signups-broadcast' => TRUE,
+  );
+  return $paths;
+}
