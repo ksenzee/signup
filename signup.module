@@ -297,7 +297,7 @@ function signup_help($path, $arg) {
 function signup_menu() {
   $path = drupal_get_path('module', 'signup') . '/includes';
   $items = array();
-  $items['admin/config/signup'] = array(
+  $items['admin/config/people/signup'] = array(
     'description' => 'Configure settings for signups.',
     'access arguments' => array('administer all signups'),
     'page callback' => 'drupal_get_form',
@@ -347,9 +347,9 @@ function signup_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 20,
   );
-  $items['node/%node/signups/signup'] = array(
+  $items['node/%node/signup'] = array(
     'title' => 'Sign up',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'type' => MENU_LOCAL_ACTION,
     'access callback' => '_signup_menu_access',
     'access arguments' => array(1, 'signup'),
     'weight' => -10,
@@ -360,7 +360,7 @@ function signup_menu() {
     'page arguments' => array(1),
     'access callback' => '_signup_menu_access',
     'access arguments' => array(1, 'list-tab'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -5,
     'file' => 'node_output.inc',
     'file path' => $path,
@@ -402,7 +402,7 @@ function signup_menu() {
     'page arguments' => array(1),
     'access callback' => '_signup_menu_access',
     'access arguments' => array(1, 'add'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_ACTION,
     'weight' => 5,
     'file' => 'signup_form.inc',
     'file path' => $path,
@@ -413,7 +413,7 @@ function signup_menu() {
     'page arguments' => array('signup_broadcast_form', 1),
     'access callback' => '_signup_menu_access',
     'access arguments' => array(1, 'broadcast'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_ACTION,
     'weight' => 10,
     'file' => 'broadcast.inc',
     'file path' => $path,
