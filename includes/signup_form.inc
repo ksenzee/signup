@@ -144,10 +144,10 @@ function signup_validate_anon_email($nid, $anon_mail, $name = FALSE) {
   if (!valid_email_address($anon_mail)) {
     $message = t('Invalid email address entered for signup.');
   }
-  elseif (db_result(db_query("SELECT COUNT(*) FROM {users} WHERE mail = '%s'", $anon_mail))) {
+  elseif (db_query("SELECT COUNT(*) FROM {users} WHERE mail = :mail", array(':mail' => $anon_mail))->fetchField()) {
     $message = t('The email address entered belongs to a registered user.');
   }
-  elseif (db_result(db_query("SELECT COUNT(*) FROM {signup_log} WHERE anon_mail = '%s' AND nid = %d", $anon_mail, $nid))) {
+  elseif (db_query("SELECT COUNT(*) FROM {signup_log} WHERE anon_mail = :mail AND nid = :nid", array(':mail' => $anon_mail, ':nid' => $nid))->fetchField()) {
     $node = node_load($nid);
     $message = t('The email address entered has already been used to sign up for this %node_type.', array('%node_type' => node_type_get_name($node->type)));
   }

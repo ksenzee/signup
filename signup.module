@@ -1237,7 +1237,7 @@ function signup_sign_up_user($signup_form, $notify_user = TRUE) {
     // Ensure the uid is 0 for anonymous signups, even if it's not duplicate.
     $signup_form['uid'] = 0;
     // Now, see if this email is already signed-up.
-    if (db_result(db_query("SELECT COUNT(*) FROM {signup_log} WHERE anon_mail = '%s' AND nid = %d", $signup_anon_mail, $node->nid))) {
+    if (db_query("SELECT COUNT(*) FROM {signup_log} WHERE anon_mail = :mail AND nid = :nid", array(':mail' => $signup_anon_mail, ':nid' => $node->nid))->fetchField()) {
       drupal_set_message(t('Anonymous user %email is already signed up for %title', array('%email' => $signup_anon_mail, '%title' => $node->title), array('langcode' => 'error')));
       return FALSE;
     }
