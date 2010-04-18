@@ -866,13 +866,6 @@ function signup_node_view($node, $view_mode = 'full') {
 }
 
 /**
- * Implements hook_nodeapi().
- *
- * @ingroup signup_nodeapi
- */
-function signup_nodeapi_OLD(&$node, $op, $teaser = NULL, $page = NULL) { }
-
-/**
  * Helper function that determines if a given node should have any
  * signup-related output.
  *
