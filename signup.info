@@ -4,6 +4,8 @@ description = "Allow users to sign up for content (especially events)."
 package = Signup
 core = 7.x
 
+configure = admin/config/people/signup
+
 files[] = signup.api.php
 files[] = signup.install
 files[] = signup.module
