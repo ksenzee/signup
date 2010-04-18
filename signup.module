@@ -350,8 +350,8 @@ function signup_menu() {
   $items['node/%node/signups/signup'] = array(
     'title' => 'Sign up',
     'type' => MENU_DEFAULT_LOCAL_TASK,
-    'page callback' => '_signup_current_user_signup',
-    'page arguments' => array(1, 'tab'),
+    'page callback' => 'signup_current_user_signup_page',
+    'page arguments' => array(1),
     'access callback' => '_signup_menu_access',
     'access arguments' => array(1, 'signup'),
     'weight' => -10,
@@ -571,6 +571,16 @@ function _signup_menu_signup_access($signup, $op) {
     return TRUE;
   }
   return FALSE;
+}
+
+/**
+ * Page callback for displaying a signup form.
+ */
+function signup_current_user_signup_page($node) {
+  // TODO: This probably shouldn't be here.
+  drupal_set_title($node->title);
+
+  return _signup_current_user_signup($node, 'tab');
 }
 
 /**
