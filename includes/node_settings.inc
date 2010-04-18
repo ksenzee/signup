@@ -139,6 +139,9 @@ function signup_node_settings_form($form, $form_state, $node = NULL, $node_type 
  * Page callback for the node/N/signups/settings subtab.
  */
 function signup_node_settings_page($node) {
+  // TODO: This probably shouldn't be here.
+  drupal_set_title($node->title);
+
   $node_scheduler = _signup_get_node_scheduler($node);
   $node_has_date = $node_scheduler != 'none';
   return drupal_get_form('signup_node_settings_form', $node, $node->type, $node_has_date, TRUE);

@@ -116,6 +116,9 @@ function _signup_current_user_signup($node, $type = 'node') {
 function signup_user_list_output($node) {
   $output = '';
 
+  // TODO: This probably shouldn't be here.
+  drupal_set_title($node->title);
+
   // How should the list of signed-up users be displayed, if at all?
   $display_list = variable_get('signup_display_signup_user_list', 'signup');
 
