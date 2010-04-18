@@ -730,6 +730,7 @@ function signup_form_node_type_form_alter(&$form, &$form_state) {
   $type = $form['old_type']['#value'];
   $form['signup'] = array(
     '#type' => 'fieldset',
+    '#group' => 'additional_settings',
     '#title' => t('Signup settings'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,

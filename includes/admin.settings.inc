@@ -4,11 +4,11 @@
 
 /**
  * @file
- * Code required for the signup settings page (admin/settings/signup).
+ * Code required for the signup settings page (admin/config/people/signup).
  */
 
 /**
- * Form builder for the settings page under admin/setttings/signup
+ * Form builder for the settings page under admin/config/people/signup
  */
 function signup_settings_form() {
   module_load_include('inc', 'signup', 'includes/node_settings');
