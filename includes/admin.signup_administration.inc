@@ -11,6 +11,11 @@
  * Print the admin signup overview page located at admin/content/signup.
  */
 function signup_admin_page() {
+  // TODO: This is a hack.
+  $sql = "SELECT n.nid, n.title, s_l.sid, u.name, u.uid, s_l.form_data FROM {node} n INNER JOIN {signup_log} s_l ON n.nid = s_l.nid INNER JOIN {users} u ON s_l.uid = u.uid ORDER BY n.nid";
+  $signups = db_query($sql);
+  return theme('signups_recent_block', array('signups' => $signups));
+
   $filter_status_form = drupal_get_form('signup_filter_status_form');
   $signup_admin_form = drupal_get_form('signup_admin_form');
   return array(
