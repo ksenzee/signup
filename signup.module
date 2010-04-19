@@ -304,7 +304,7 @@ function signup_help($path, $arg) {
 function signup_menu() {
   $path = drupal_get_path('module', 'signup') . '/includes';
   $items = array();
-  $items['admin/config/signup'] = array(
+  $items['admin/config/people/signup'] = array(
     'description' => 'Configure settings for signups.',
     'access arguments' => array('administer all signups'),
     'page callback' => 'drupal_get_form',
