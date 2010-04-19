@@ -408,7 +408,7 @@ function signup_menu() {
     'file' => 'node_admin.inc',
     'file path' => $path,
   );
-  $items['node/%node/signups-add'] = array(
+  $items['node/%node/signups/admin/add'] = array(
     'title' => 'Add signup',
     'page callback' => 'signup_node_admin_add_user_page',
     'page arguments' => array(1),
@@ -419,7 +419,7 @@ function signup_menu() {
     'file' => 'signup_form.inc',
     'file path' => $path,
   );
-  $items['node/%node/signups-broadcast'] = array(
+  $items['node/%node/signups/admin/broadcast'] = array(
     'title' => 'Signup broadcast',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('signup_broadcast_form', 1),
@@ -627,7 +627,7 @@ function signup_node_tab_page($node) {
     drupal_goto("node/$node->nid/signups/admin", $options);
   }
   elseif ($broadcast) {
-    drupal_goto("node/$node->nid/signups-broadcast", $options);
+    drupal_goto("node/$node->nid/signups/admin/broadcast", $options);
   }
 }
 
@@ -1816,14 +1816,15 @@ function signup_token_values($type = 'all', $object = NULL) {
   return $values;
 }
 
+/**
+ * Implements hook_admin_paths().
+ */
 function signup_admin_paths() {
   $paths = array(
     'signup/cancel/*' => TRUE,
     'signup/edit/*' => TRUE,
     'node/*/signups' => TRUE,
     'node/*/signups/*' => TRUE,
-    'node/*/signups-add' => TRUE,
-    'node/*/signups-broadcast' => TRUE,
   );
   return $paths;
 }

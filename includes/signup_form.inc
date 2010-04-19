@@ -192,9 +192,7 @@ function signup_form_validate_username($form, $form_state) {
 }
 
 function signup_node_admin_add_user_page($node) {
-
-  // TODO: This probably shouldn't be here.
-  drupal_set_title($node->title);
+  drupal_set_title(t('Add signup for %title', array('%title' => $node->title)), PASS_THROUGH);
 
   $output = '';
   if ($node->signup_status) {
