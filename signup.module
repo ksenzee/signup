@@ -341,6 +341,7 @@ function signup_menu() {
     'page callback' => 'signup_admin_page',
     'title' => 'Signup administration',
     'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_PAGE|MENU_CONTEXT_INLINE,
     'file' => 'admin.signup_administration.inc',
     'file path' => $path,
   );
