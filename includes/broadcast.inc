@@ -15,7 +15,6 @@
  */
 function signup_broadcast_form($form, $form_state, $node) {
 
-  // TODO: This probably shouldn't be here.
   drupal_set_title($node->title);
 
   $signups = signup_get_signups($node->nid);
