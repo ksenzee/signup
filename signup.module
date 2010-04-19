@@ -168,6 +168,13 @@ function signup_theme() {
         'view' => NULL,
       ),
     ),
+    'signups_recent_block' => array(
+      'file' => 'no_views.inc',
+      'path' => $path,
+      'variables' => array(
+        'signups' => NULL,
+      ),
+    ),
   );
 }
 

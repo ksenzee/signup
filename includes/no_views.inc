@@ -12,7 +12,7 @@
  */
 
 /**
- * Implements hook_block().
+ * Implements hook_block_info().
  *
  * @ingroup signup_core
  *
@@ -28,9 +28,13 @@
  */
 function signup_block_info() {
   $blocks['current']['info'] = t('Current signups');
+  $blocks['recent']['info'] = t('Recent signups');
   return $blocks; 
 }
 
+/**
+ * Implements hook_block_view().
+ */
 function signup_block_view($delta = '') {
   switch ($delta) {
     case 'current':
@@ -41,6 +45,19 @@ function signup_block_view($delta = '') {
         $block['content'] = theme('item_list', array('items' => $titles)) . l(t('View signup schedule'), "user/$user->uid/signups");
         return $block;
       }
+      break;
+    case 'recent':
+      $block['subject'] = t('Recent signups');
+
+      $sql = "SELECT n.nid, n.title, s_l.sid, u.name, u.uid, s_l.form_data FROM {node} n INNER JOIN {signup_log} s_l ON n.nid = s_l.nid INNER JOIN {users} u ON s_l.uid = u.uid ORDER BY n.nid";
+      $signups = db_query($sql);
+      if ($signups) {
+        $block['content'] = theme('signups_recent_block', array('signups' => $signups));
+      }
+      else {
+        $block['content'] = t('No signups.');
+      }
+      return $block;
       break;
   }
 }
@@ -136,4 +153,36 @@ function signup_list_user_signups($uid) {
     }
   }
   return $titles;
+}
+
+function theme_signups_recent_block($variables) {
+  $signups = $variables['signups'];
+  $output = '';
+  if (empty($signups)) {
+    return $output;
+  }
+  $l_options = array('query' => drupal_get_destination());
+  foreach ($signups as $signup) {
+    $form_data = unserialize($signup->form_data);
+    $row = array();
+    $row[] = array(
+      'data' => '<div>' . l($signup->title, 'node/' . $signup->nid . '/signups') . '</div><div>' . check_plain($form_data['Name']). '</div>',
+    );
+    $row[] = array(
+      'data' => l(t('edit'), 'signup/edit/' . $signup->sid, $l_options),
+      'class' => 'edit',
+    );
+    $token = signup_get_token($signup->sid, 'cancel');
+    $row[] = array(
+      'data' => l(t('cancel'), 'signup/cancel/' . $signup->sid . '/' . $token, $l_options),
+      'class' => 'cancel',
+    );
+    $rows[] = $row;
+  }
+
+  if ($rows) {
+    $output = theme('table', array('rows' => $rows));
+  }
+
+  return $output;
 }
