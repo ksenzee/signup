@@ -357,7 +357,7 @@ function signup_menu() {
   );
   $items['node/%node/signups/signup'] = array(
     'title' => 'Sign up',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK,
     'page callback' => 'signup_current_user_signup_page',
     'page arguments' => array(1),
     'access callback' => '_signup_menu_access',
@@ -372,7 +372,7 @@ function signup_menu() {
     'page arguments' => array(1),
     'access callback' => '_signup_menu_access',
     'access arguments' => array(1, 'list-tab'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -5,
     'file' => 'node_output.inc',
     'file path' => $path,
