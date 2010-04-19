@@ -1139,7 +1139,10 @@ function signup_cancel_signup($signup, $notify_user = TRUE) {
   module_invoke_all('signup_cancel', $signup, $node);
 
   // Delete the record from the {signup_log} table.
-  db_query('DELETE FROM {signup_log} WHERE sid = %d', $signup->sid);
+  db_delete('signup_log')
+    ->condition('sid', $signup->sid)
+    ->execute();
+  //db_query('DELETE FROM {signup_log} WHERE sid = %d', $signup->sid);
   if ($notify_user) {
     drupal_set_message(t('Signup to !title cancelled.', array('!title' => l($node->title, "node/$node->nid"))));
   }
