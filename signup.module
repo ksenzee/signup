@@ -340,6 +340,7 @@ function signup_menu() {
     'access arguments' => array('administer all signups'),
     'page callback' => 'signup_admin_page',
     'title' => 'Signup administration',
+    'type' => MENU_LOCAL_TASK,
     'file' => 'admin.signup_administration.inc',
     'file path' => $path,
   );
