@@ -14,6 +14,12 @@ class signup_handler_field_signup_user_form_data extends views_handler_field_pre
       '#default_value' => isset($this->options['form_data_fieldname']) ? $this->options['form_data_fieldname'] : '',
     );
   }
+  
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['form_data_fieldname'] = array('default' => '');
+    return $options;
+  }
 
   /**
    * Set each field value to "$key: $value" when rendering all fields.
